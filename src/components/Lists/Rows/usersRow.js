@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import UrlNodeServer from '../../../api/NodeServer'
+import UrlNodeServer from '../../../api/nodeServer'
 import {
     DropdownMenu,
     DropdownItem,

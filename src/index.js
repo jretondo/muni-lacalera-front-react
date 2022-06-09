@@ -8,7 +8,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import "assets/scss/argon-dashboard-react.scss";
 import AdminLayout from "layouts/admin.js";
 import AuthLayout from "layouts/auth.js";
-import AlertsProvider from 'context/alerts/Provider';
+import AlertsProvider from 'context/alerts/provider';
 
 ReactDOM.render(
   <BrowserRouter>

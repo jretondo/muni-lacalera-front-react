@@ -16,7 +16,7 @@ import {
   Spinner
 } from "reactstrap";
 import { Link, Redirect } from "react-router-dom";
-import UrlNodeServer from '../../api/NodeServer';
+import UrlNodeServer from '../../api/nodeServer';
 import axios from "axios";
 
 const Login = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle }) => {

@@ -23,7 +23,7 @@ import {
 import Img1 from 'assets/img/theme/default-avatar.png';
 import Brand2 from 'assets/img/brand/logo.png';
 import axios from "axios";
-import UrlNodeServer from "../../api/NodeServer";
+import UrlNodeServer from "../../api/nodeServer";
 
 class Sidebar extends React.Component {
   state = {

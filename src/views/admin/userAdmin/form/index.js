@@ -1,4 +1,4 @@
-import UrlNodeServer from '../../../../api/NodeServer'
+import UrlNodeServer from '../../../../api/nodeServer'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row, Spinner } from 'reactstrap'

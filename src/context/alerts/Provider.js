@@ -6,28 +6,30 @@ import { Button } from 'reactstrap';
 
 const AlertsProvider = ({ children }) => {
     const [alerts, setAlerts] = useState([])
-    console.log('alerts :>> ', alerts);
-    const newAlert = (type, strong, msg) => {
+    const [plantAlerts, setPlantAlerts] = useState(<></>)
 
-        setAlerts(() => [...alerts, {
+    const newAlert = (type, strong, msg) => {
+        setAlerts((al) => [...al, {
             type,
             strong,
             msg
         }])
-        setTimeout(() => {
-            if (alerts.length > 0) {
-                setAlerts([...alerts.slice(0, 1)])
-            } else {
-                setAlerts([])
-            }
-        }, 2500);
     }
 
-    return (
-        <AlertsContext.Provider value={{
+    const removeAlert = () => {
+        if (alerts.length > 1) {
+            let alrt = alerts
+            alrt.splice(0, 1)
+            setAlerts(() => [...alrt])
+        } else {
+            setAlerts([])
+        }
 
-        }}>
-            {
+    }
+
+    const buildPlant = () => {
+        if (alerts.length > 0) {
+            setPlantAlerts(
                 alerts.map((item, key) => {
                     return (
                         <Alert
@@ -39,7 +41,20 @@ const AlertsProvider = ({ children }) => {
                         />
                     )
                 })
-            }
+            )
+        } else {
+            setPlantAlerts(<></>)
+        }
+    }
+    useEffect(() => {
+        buildPlant()
+    }, [alerts])
+
+    return (
+        <AlertsContext.Provider value={{
+
+        }}>
+            {plantAlerts}
 
             <Button color={"danger"} onClick={e => {
                 e.preventDefault()
@@ -48,6 +63,14 @@ const AlertsProvider = ({ children }) => {
                 style={{ position: "fixed", right: 0, left: 0, top: 0, margin: "auto", marginTop: "130px", zIndex: "99999" }}
             >
                 Toggle
+            </Button>
+            <Button color={"warning"} onClick={e => {
+                e.preventDefault()
+                removeAlert()
+            }}
+                style={{ position: "fixed", right: 0, left: 0, top: 0, margin: "auto", marginTop: "180px", zIndex: "99999" }}
+            >
+                Remove
             </Button>
             {children}
         </AlertsContext.Provider>

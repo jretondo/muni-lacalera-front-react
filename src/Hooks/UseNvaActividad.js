@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import UrlNodeServer from '../api/NodeServer'
+import UrlNodeServer from '../api/nodeServer'
 
 export const useActividad = (call, actividad) => {
     const [data2, setData] = useState([])

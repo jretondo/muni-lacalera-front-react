@@ -15,10 +15,10 @@ import {
   Spinner
 } from "reactstrap";
 import { Link, Redirect } from "react-router-dom";
-import UrlNodeServer from '../../api/NodeServer'
-import { seguridadClave } from 'Function/securityPass'
+import UrlNodeServer from '../../api/nodeServer'
+import { seguridadClave } from 'function/securityPass'
 import axios from "axios";
-import { UseSecureRoutes } from "Hooks/UseSecureRoutes";
+import { UseSecureRoutes } from "hooks/useSecureRoutes";
 
 const NvaPass = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle }) => {
   const [pass1, setPass1] = useState("")

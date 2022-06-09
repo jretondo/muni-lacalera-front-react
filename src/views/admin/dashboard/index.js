@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useToken } from '../../../Hooks/UseFetchToken'
-import UrlNodeServer from '../../../api/NodeServer'
+import { useToken } from '../../../hooks/useFetchToken'
+import UrlNodeServer from '../../../api/nodeServer'
 import Header from "components/Headers/Header.js";
 import {
     Spinner

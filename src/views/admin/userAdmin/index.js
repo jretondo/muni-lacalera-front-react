@@ -1,12 +1,12 @@
-import UrlNodeServer from '../../../api/NodeServer'
+import UrlNodeServer from '../../../api/nodeServer'
 import React, { useEffect, useState } from 'react'
-import { UseSecureRoutes } from 'Hooks/UseSecureRoutes'
+import { UseSecureRoutes } from 'hooks/useSecureRoutes'
 import { Container, Spinner } from 'reactstrap'
 import { Redirect } from 'react-router'
 import Header from "components/Headers/Header.js";
 import UserList from './list'
 import UserForm from './form'
-import { useActividad } from 'Hooks/UseNvaActividad'
+import { useActividad } from 'hooks/useNvaActividad'
 import UserPermissions from './permissions'
 
 const UserAdmin = () => {

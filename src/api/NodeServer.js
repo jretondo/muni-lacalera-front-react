@@ -1,12 +1,10 @@
-require('dotenv').config()
-
 let host = ""
 let publicFiles = ""
 const local = 1
 if (process.env.NODE_ENV === "development") {
     if (local === 1) {
-        host = "http://192.168.0.11:3010/api"
-        publicFiles = "http://192.168.0.11:3010/static"
+        host = "http://localhost:3010/api"
+        publicFiles = "http://localhost:3010/static"
     } else {
         host = "https://api-test.nekoadmin.com.ar/club-limpieza/api"
         publicFiles = "https://api-test.nekoadmin.com.ar/club-limpieza/static"
