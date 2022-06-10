@@ -2,11 +2,9 @@ import { useEffect, useState } from 'react';
 import AlertsContext from './index';
 import React from 'react';
 import Alert from 'components/Alerts/Alert1';
-import { Button } from 'reactstrap';
 
 const AlertsProvider = ({ children }) => {
     const [alerts, setAlerts] = useState([])
-    const [plantAlerts, setPlantAlerts] = useState(<></>)
 
     const newAlert = (type, strong, msg) => {
         setAlerts((al) => [...al, {
@@ -24,54 +22,34 @@ const AlertsProvider = ({ children }) => {
         } else {
             setAlerts([])
         }
-
     }
 
-    const buildPlant = () => {
-        if (alerts.length > 0) {
-            setPlantAlerts(
-                alerts.map((item, key) => {
-                    return (
-                        <Alert
-                            type={item.type}
-                            msgStrong={item.strong}
-                            msgGral={item.msg}
-                            id={key}
-                            key={key}
-                        />
-                    )
-                })
-            )
-        } else {
-            setPlantAlerts(<></>)
-        }
-    }
     useEffect(() => {
-        buildPlant()
-    }, [alerts])
+        if (alerts.length > 0) {
+            const idTimer = setTimeout(() => {
+                removeAlert()
+            }, 3000);
+            return () => {
+                clearInterval(idTimer)
+            }
+        }
+    }, [newAlert])
 
     return (
         <AlertsContext.Provider value={{
-
+            newAlert
         }}>
-            {plantAlerts}
-
-            <Button color={"danger"} onClick={e => {
-                e.preventDefault()
-                newAlert("success", "fas ", "fsfsgsagga")
-            }}
-                style={{ position: "fixed", right: 0, left: 0, top: 0, margin: "auto", marginTop: "130px", zIndex: "99999" }}
-            >
-                Toggle
-            </Button>
-            <Button color={"warning"} onClick={e => {
-                e.preventDefault()
-                removeAlert()
-            }}
-                style={{ position: "fixed", right: 0, left: 0, top: 0, margin: "auto", marginTop: "180px", zIndex: "99999" }}
-            >
-                Remove
-            </Button>
+            {alerts.map((item, key) => {
+                return (
+                    <Alert
+                        type={item.type}
+                        msgStrong={item.strong}
+                        msgGral={item.msg}
+                        id={key}
+                        key={key}
+                    />
+                )
+            })}
             {children}
         </AlertsContext.Provider>
     )

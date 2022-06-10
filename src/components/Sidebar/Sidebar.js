@@ -2,7 +2,6 @@ import React from "react";
 import { NavLink as NavLinkRRD, Link } from "react-router-dom";
 // nodejs library to set properties for components
 import { PropTypes } from "prop-types";
-import { Redirect } from "react-router-dom";
 // reactstrap components
 import {
   Collapse,
@@ -141,114 +140,104 @@ class Sidebar extends React.Component {
       })
     }
 
-    if (this.state.salir) {
-      return (
-        <Redirect
-          className="text-light"
-          to="/cbabaitcast/"
-        />
-      )
-    } else {
-      return (
-        <Navbar
-          className="navbar-vertical fixed-left navbar-dark bg-ligth"
-          expand="md"
-          id="sidenav-main"
-        >
-          <Container fluid>
-            {/* Toggler */}
-            <button
-              className="navbar-toggler"
-              type="button"
-              style={{ background: "#0081c9" }}
-              onClick={this.toggleCollapse}
-            >
-              <span className="navbar-toggler-icon" />
-            </button>
-            {/* Brand */}
-            {logo ? (
-              <NavbarBrand className="pt-0" {...navbarBrandProps}>
-                <img alt="..." src={Brand2} style={{ width: "150px", height: "50px" }} />
-              </NavbarBrand>
-            ) : null}
-            {/* User */}
-            <Nav className="align-items-center d-md-none">
-              <UncontrolledDropdown nav>
-                <DropdownToggle nav>
-                  <Media className="align-items-center">
-                    <span className="avatar avatar-sm rounded-circle">
-                      <img
-                        alt="..."
-                        src={Img1}
-                      />
-                    </span>
-                  </Media>
-                </DropdownToggle>
-                <DropdownMenu className="dropdown-menu-arrow" right>
-                  <DropdownItem className="noti-title" header tag="div">
-                    <h6 className="text-overflow m-0">Bienvenido!</h6>
-                  </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
-                    <i className="ni ni-single-02" />
-                    <span>Mi perfil</span>
-                  </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
-                    <i className="ni ni-calendar-grid-58" />
-                    <span>Actividad</span>
-                  </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
-                    <i className="ni ni-support-16" />
-                    <span>Soporte</span>
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  <DropdownItem href="#pablo" onClick={e => SalirBtn(e)}>
-                    <i className="ni ni-user-run" />
-                    <span>Salir</span>
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </Nav>
-            {/* Collapse */}
-            <Collapse navbar isOpen={this.state.collapseOpen}>
-              {/* Collapse header */}
-              <div className="navbar-collapse-header d-md-none">
-                <Row>
-                  {logo ? (
-                    <Col className="collapse-brand" xs="6">
-                      {logo.innerLink ? (
-                        <Link to={logo.innerLink}>
-                          <img alt={logo.imgAlt} src={Brand2} />
-                        </Link>
-                      ) : (
-                        <a href={logo.outterLink}>
-                          <img alt={logo.imgAlt} src={Brand2} />
-                        </a>
-                      )}
-                    </Col>
-                  ) : null}
-                  <Col className="collapse-close" xs="6">
-                    <button
-                      className="navbar-toggler"
-                      type="button"
-                      style={{ color: "black" }}
-                      onClick={this.toggleCollapse}
-                    >
-                      <span />
-                      <span />
-                    </button>
+    return (
+      <Navbar
+        className="navbar-vertical fixed-left navbar-dark bg-ligth"
+        expand="md"
+        id="sidenav-main"
+      >
+        <Container fluid>
+          {/* Toggler */}
+          <button
+            className="navbar-toggler"
+            type="button"
+            style={{ background: "#0081c9" }}
+            onClick={this.toggleCollapse}
+          >
+            <span className="navbar-toggler-icon" />
+          </button>
+          {/* Brand */}
+          {logo ? (
+            <NavbarBrand className="pt-0" {...navbarBrandProps}>
+              <img alt="..." src={Brand2} style={{ width: "150px", height: "50px" }} />
+            </NavbarBrand>
+          ) : null}
+          {/* User */}
+          <Nav className="align-items-center d-md-none">
+            <UncontrolledDropdown nav>
+              <DropdownToggle nav>
+                <Media className="align-items-center">
+                  <span className="avatar avatar-sm rounded-circle">
+                    <img
+                      alt="..."
+                      src={Img1}
+                    />
+                  </span>
+                </Media>
+              </DropdownToggle>
+              <DropdownMenu className="dropdown-menu-arrow" right>
+                <DropdownItem className="noti-title" header tag="div">
+                  <h6 className="text-overflow m-0">Bienvenido!</h6>
+                </DropdownItem>
+                <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <i className="ni ni-single-02" />
+                  <span>Mi perfil</span>
+                </DropdownItem>
+                <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <i className="ni ni-calendar-grid-58" />
+                  <span>Actividad</span>
+                </DropdownItem>
+                <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <i className="ni ni-support-16" />
+                  <span>Soporte</span>
+                </DropdownItem>
+                <DropdownItem divider />
+                <DropdownItem href="#pablo" onClick={e => SalirBtn(e)}>
+                  <i className="ni ni-user-run" />
+                  <span>Salir</span>
+                </DropdownItem>
+              </DropdownMenu>
+            </UncontrolledDropdown>
+          </Nav>
+          {/* Collapse */}
+          <Collapse navbar isOpen={this.state.collapseOpen}>
+            {/* Collapse header */}
+            <div className="navbar-collapse-header d-md-none">
+              <Row>
+                {logo ? (
+                  <Col className="collapse-brand" xs="6">
+                    {logo.innerLink ? (
+                      <Link to={logo.innerLink}>
+                        <img alt={logo.imgAlt} src={Brand2} />
+                      </Link>
+                    ) : (
+                      <a href={logo.outterLink}>
+                        <img alt={logo.imgAlt} src={Brand2} />
+                      </a>
+                    )}
                   </Col>
-                </Row>
-              </div>
-              {/* Navigation */}
-              <Nav navbar>{this.state.data}</Nav>
-              {/* Divider */}
-              <hr className="my-3" />
-            </Collapse>
-          </Container>
-        </Navbar>
-      );
-    }
-
+                ) : null}
+                <Col className="collapse-close" xs="6">
+                  <button
+                    className="navbar-toggler"
+                    type="button"
+                    style={{ color: "black" }}
+                    onClick={this.toggleCollapse}
+                  >
+                    <span />
+                    <span />
+                  </button>
+                </Col>
+              </Row>
+            </div>
+            {/* Navigation */}
+            <Nav navbar>{this.state.data}</Nav>
+            {/* Divider */}
+            <hr className="my-3" />
+          </Collapse>
+        </Container>
+      </Navbar>
+    );
   }
 }
 

@@ -34,7 +34,7 @@ const AdminNavbar = (props) => {
     return (
       <Redirect
         className="text-light"
-        to="/"
+        to="/auth/login"
       />
     )
   } else {

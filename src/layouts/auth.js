@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 
-import { Container, Row, Col, Alert } from "reactstrap";
+import { Container, Row, Col } from "reactstrap";
 
 import Brand2 from 'assets/img/brand/logo.png';
 
@@ -11,11 +11,6 @@ import AuthNavbar from 'components/Navbars/AuthNavbar';
 import routes from "routes/login";
 
 const Auth = () => {
-  const [colorAlert, setColorAlert] = useState("danger")
-  const [msgAlert, setMsgAlert] = useState("")
-  const [msgAlertStrong, setMsgAlertStrong] = useState("")
-  const [alertToggle, setAlertToggle] = useState("none")
-
   useEffect(() => {
     document.body.classList.add("bg-default")
     return () => {
@@ -29,12 +24,7 @@ const Auth = () => {
         return (
           <Route
             path={prop.layout + prop.path}
-            render={() => <prop.component
-              setColorAlert={(colorAlert) => setColorAlert(colorAlert)}
-              setMsgAlert={(msgAlert) => setMsgAlert(msgAlert)}
-              setMsgAlertStrong={(msgAlertStrong) => setMsgAlertStrong(msgAlertStrong)}
-              setAlertToggle={(alertToggle) => setAlertToggle(alertToggle)}
-            />}
+            render={() => <prop.component />}
             key={key}
           />
         );
@@ -46,9 +36,6 @@ const Auth = () => {
 
   return (
     <>
-      <Alert color={colorAlert} style={{ transition: "0.6s ease", position: "fixed", right: 0, left: 0, top: 0, margin: "auto", marginTop: "30px", zIndex: "99999", textAlign: "center", display: `${alertToggle}` }} >
-        <strong>{msgAlertStrong}</strong> {msgAlert}
-      </Alert>
       <div className="main-content">
         <AuthNavbar />
         <div className="header bg-gradient-secondary py-5">

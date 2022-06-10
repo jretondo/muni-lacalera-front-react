@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Card,
@@ -18,47 +18,22 @@ import { Link, Redirect } from "react-router-dom";
 import UrlNodeServer from '../../api/nodeServer'
 import { seguridadClave } from 'function/securityPass'
 import axios from "axios";
-import { UseSecureRoutes } from "hooks/useSecureRoutes";
+import alertsContext from 'context/alerts';
 
-const NvaPass = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle }) => {
+const NvaPass = () => {
   const [pass1, setPass1] = useState("")
   const [pass2, setPass2] = useState("")
   const [done, setDone] = useState(false)
   const [passSecureStr, setPassSecureStr] = useState("muy débil")
   const [passSecureColor, setPassSecureColor] = useState("danger")
   const [call, setCall] = useState(false)
-  const { loading, error } = UseSecureRoutes(
-    UrlNodeServer.routesDir.sub.changePass,
-    call
-  )
+
+  const { newAlert } = useContext(alertsContext)
 
   useEffect(() => {
     setCall(!call)
     // eslint-disable-next-line
   }, [])
-
-  useEffect(() => {
-    if (!loading) {
-      if (error) {
-        setColorAlert("danger")
-        setMsgAlertStrong("Error interno!")
-        setMsgAlert("")
-        setAlertToggle("")
-        setTimeout(() => {
-          setAlertToggle("none")
-        }, 5000);
-      } else {
-        setColorAlert("success")
-        setMsgAlertStrong("Cambie la contraseña!")
-        setMsgAlert("")
-        setAlertToggle("")
-        setTimeout(() => {
-          setAlertToggle("none")
-        }, 5000);
-      }
-    }
-    // eslint-disable-next-line 
-  }, [loading])
 
   const recuperarPass = async (e) => {
     e.preventDefault()
@@ -72,43 +47,19 @@ const NvaPass = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle
           headers: { 'Authorization': 'Bearer ' + localStorage.getItem('user-token') }
         })
           .then(() => {
-            setColorAlert("success")
-            setMsgAlertStrong("Contraseña cambiada con éxito!")
-            setMsgAlert("Ingrese con sus nuevas credenciales")
-            setAlertToggle("")
             setDone(true)
-            setTimeout(() => {
-              setAlertToggle("none")
-            }, 5000);
+            newAlert("success", "Contraseña cambiada con éxito!", "Ingrese con sus nuevas credenciales")
           })
           .catch(() => {
-            setColorAlert("danger")
-            setMsgAlertStrong("Error inesperado!")
-            setMsgAlert(error)
-            setAlertToggle("")
-            setTimeout(() => {
-              setAlertToggle("none")
-            }, 5000);
+            newAlert("danger", "Error desconocido!", "Intente nuevamente")
           })
       } else {
-        setColorAlert("danger")
-        setMsgAlertStrong("No coinciden las contraseñas!")
-        setMsgAlert("Las contraseñas deben ser iguales.")
-        setAlertToggle("")
+        newAlert("danger", "No coinciden las contraseñas!", "Las contraseñas deben ser iguales.")
         document.getElementById("emailInp").select()
-        setTimeout(() => {
-          setAlertToggle("none")
-        }, 5000);
       }
     } else {
-      setColorAlert("danger")
-      setMsgAlertStrong("Contraseña insegura!")
-      setMsgAlert("La contraseña debe ser segura.")
-      setAlertToggle("")
+      newAlert("danger", "Contraseña insegura!", "La contraseña debe ser segura")
       document.getElementById("emailInp").select()
-      setTimeout(() => {
-        setAlertToggle("none")
-      }, 5000);
     }
   }
 

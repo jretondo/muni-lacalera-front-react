@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Button,
   Card,
@@ -17,11 +17,14 @@ import {
 import { Link, Redirect } from "react-router-dom";
 import UrlNodeServer from '../../api/nodeServer'
 import axios from 'axios'
+import alertsContext from 'context/alerts';
 
-const ForgPass = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle }) => {
+const ForgPass = () => {
   const [email, setEmail] = useState("")
   const [esperar, setEsperar] = useState(false)
   const [done, setDone] = useState(false)
+
+  const { newAlert } = useContext(alertsContext)
 
   const recuperarPass = async () => {
     const datos = {
@@ -34,32 +37,14 @@ const ForgPass = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggl
         const respuesta = res.data
         const estatus = parseInt(respuesta.status)
         if (estatus === 200) {
-          setColorAlert("success")
-          setMsgAlertStrong("Contraseña cambiada!")
-          setMsgAlert("Revise su correo que le tiene que haber llegado un correo con la nueva contraseña")
-          setAlertToggle("")
+          newAlert("success", "Contraseña nueva!", "Su contraseña ha sido cambiada con éxito.")
           setDone(true)
-          setTimeout(() => {
-            setAlertToggle("none")
-          }, 5000);
         } else {
-          setColorAlert("danger")
-          setMsgAlertStrong("Error inesperado!")
-          setMsgAlert("Hubo un error al querer recuperar su contraseña. intente nuevamente más tarde.")
-          setAlertToggle("")
-          setTimeout(() => {
-            setAlertToggle("none")
-          }, 5000);
+          newAlert("danger", "Error inesperado!", "Intente nuevamente.")
         }
       })
       .catch(() => {
-        setColorAlert("danger")
-        setMsgAlertStrong("Error inesperado!")
-        setMsgAlert("Hubo un error al querer recuperar su contraseña. intente nuevamente más tarde.")
-        setAlertToggle("")
-        setTimeout(() => {
-          setAlertToggle("none")
-        }, 5000);
+        newAlert("danger", "Error inesperado!", "Intente nuevamente.")
       })
   }
 

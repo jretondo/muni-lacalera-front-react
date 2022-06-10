@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Card,
@@ -18,8 +18,9 @@ import {
 import { Link, Redirect } from "react-router-dom";
 import UrlNodeServer from '../../api/nodeServer';
 import axios from "axios";
+import alertsContext from 'context/alerts';
 
-const Login = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle }) => {
+const Login = () => {
   const [user, setUser] = useState("")
   const [pass, setPass] = useState("")
   const [verPassToggle, setVerPassToggle] = useState(false)
@@ -30,10 +31,12 @@ const Login = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle }
   const [nvaPass, setNvaPass] = useState(false)
   const [esperar, setEsperar] = useState(false)
 
+  const { newAlert } = useContext(alertsContext)
+
   useEffect(() => {
-    localStorage.removeItem("loginInfo")
     localStorage.removeItem("Nombre")
     localStorage.removeItem("Apellido")
+    localStorage.removeItem("user-token")
     if (!isLog) {
       const emailGuardado = localStorage.getItem("savedEmail")
       if (emailGuardado) {
@@ -93,23 +96,11 @@ const Login = ({ setColorAlert, setMsgAlert, setMsgAlertStrong, setAlertToggle }
             setIsLog(true)
           }
         } else {
-          setColorAlert("danger")
-          setMsgAlertStrong("Error de ingreso!")
-          setMsgAlert("")
-          setAlertToggle("")
-          setTimeout(() => {
-            setAlertToggle("none")
-          }, 5000);
+          newAlert("danger", "Error de ingreso!", "Posiblemente la contraseña sea incorrecta.")
         }
       })
       .catch(() => {
-        setColorAlert("danger")
-        setMsgAlertStrong("Error de ingreso!")
-        setMsgAlert("")
-        setAlertToggle("")
-        setTimeout(() => {
-          setAlertToggle("none")
-        }, 5000);
+        newAlert("danger", "Error de ingreso!", "Posiblemente la contraseña sea incorrecta.")
       })
   }
 

@@ -10,9 +10,6 @@ import ListTable from '../../../../components/Lists/ListadoTable'
 const titulos = ["Nombre", "Usuario", "Email", ""]
 
 const UserList = ({
-    nvaActCall,
-    setNvaActCall,
-    setActividadStr,
     nvaOffer,
     setNvaOffer,
     call,
