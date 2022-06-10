@@ -1,11 +1,11 @@
 import UrlNodeServer from '../../../../api/nodeServer'
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Card, CardBody, CardFooter, CardHeader, Col, Row, Spinner } from 'reactstrap'
 import FilaUsuario from 'components/Lists/Rows/usersRow'
 import BusquedaProdForm from 'components/Search/Search1'
 import Paginacion from 'components/Pagination/Pages'
 import ListTable from '../../../../components/Lists/ListadoTable'
+import { useAxiosGetList } from '../../../../hooks/useAxiosGetList';
 
 const titulos = ["Nombre", "Usuario", "Email", ""]
 
@@ -29,103 +29,60 @@ const UserList = ({
     const [busquedaBool, setBusquedaBool] = useState(false)
     const [palabraBuscada, setPalabraBuscada] = useState("")
 
-    useEffect(() => {
-        ListarUsuarios()
-        // eslint-disable-next-line 
-    }, [call])
+    const {
+        dataPage,
+        pageObj,
+        errorList,
+        loadingList
+    } = useAxiosGetList(
+        UrlNodeServer.usuariosDir.usuarios,
+        pagina, busquedaBool, palabraBuscada
+    )
 
-    const ListarUsuarios = async () => {
-        let data = {
-            query: ""
-        }
-        if (busquedaBool) {
-            data = {
-                query: palabraBuscada
-            }
-        }
-        setloading(true)
-        await axios.get(`${UrlNodeServer.usuariosDir.usuarios}/${pagina}`, {
-            params: data,
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        })
-            .then(res => {
-                setloading(false)
-                const body = res.data.body
-                const status = parseInt(res.data.status)
-                if (status === 200) {
-                    const data = body.data
-                    const pagesObj = body.pagesObj
-
-                    let totallista
-                    try {
-                        totallista = parseInt(pagesObj.totalPag)
-                    } catch (error) {
-                        totallista = 0
-                    }
-                    if (totallista === 0) {
-                        setListado(
-                            <tr style={{ textAlign: "center", width: "100%" }}>
-                                <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos cargados</span></td>
-                            </tr>
-                        )
+    const listUsers = () => {
+        if (errorList) {
+            setDataState([])
+            setListado(
+                <tr style={{ textAlign: "center", width: "100%" }}>
+                    <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos cargados</span></td>
+                </tr>
+            )
+        } else {
+            setDataState(pageObj)
+            setListado(
+                dataPage.map((item, key) => {
+                    let primero
+                    if (key === 0) {
+                        primero = true
                     } else {
-                        setDataState(pagesObj)
-                        setUltimaPag(pagesObj.totalPag)
-                        setListado(
-                            data.map((item, key) => {
-                                let primero
-                                if (key === 0) {
-                                    primero = true
-                                } else {
-                                    primero = false
-                                }
-                                return (
-                                    <FilaUsuario
-                                        id={key}
-                                        key={key}
-                                        item={item}
-                                        setActividadStr={setActividadStr}
-                                        nvaActCall={nvaActCall}
-                                        setNvaActCall={setNvaActCall}
-                                        setCall={setCall}
-                                        call={call}
-                                        setEsperar={setloading}
-                                        nvaOffer={nvaOffer}
-                                        setDetallesBool={setDetBool}
-                                        setIdDetalle={setIdDetalle}
-                                        primero={primero}
-                                        pagina={pagina}
-                                        setPagina={setPagina}
-                                        setNvaOffer={setNvaOffer}
-                                        setPermisosBool={setPermisosBool}
-                                        setIdPermisos={setIdPermisos}
-                                        setUsuarioPermiso={setUsuarioPermiso}
-                                    />
-                                )
-                            })
-                        )
+                        primero = false
                     }
-                } else {
-                    setListado(
-                        <tr style={{ textAlign: "center", width: "100%" }}>
-                            <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos cargados</span></td>
-                        </tr>
+                    return (
+                        <FilaUsuario
+                            id={key}
+                            key={key}
+                            item={item}
+                            setEsperar={setloading}
+                            nvaOffer={nvaOffer}
+                            setDetallesBool={setDetBool}
+                            setIdDetalle={setIdDetalle}
+                            primero={primero}
+                            pagina={pagina}
+                            setPagina={setPagina}
+                            setNvaOffer={setNvaOffer}
+                            setPermisosBool={setPermisosBool}
+                            setIdPermisos={setIdPermisos}
+                            setUsuarioPermiso={setUsuarioPermiso}
+                        />
                     )
-                    setUltimaPag(1)
-                }
-            })
-            .catch(() => {
-                setloading(false)
-                setListado(
-                    <tr style={{ textAlign: "center", width: "100%" }}>
-                        <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos cargados</span></td>
-                    </tr>
-                )
-                setUltimaPag(1)
-            })
+                })
+            )
+        }
     }
+
+    useEffect(() => {
+        listUsers()
+    }, [dataPage, errorList, loadingList])
 
     return (
         <Card>
@@ -151,7 +108,7 @@ const UserList = ({
                 <Row>
                     <Col>
                         {
-                            !loading ?
+                            !loadingList ?
                                 <ListTable
                                     titlesArray={titulos}
                                 >
