@@ -6,12 +6,12 @@ if (process.env.NODE_ENV === "development") {
         host = "http://localhost:3010/api"
         publicFiles = "http://localhost:3010/static"
     } else {
-        host = "https://api-test.nekoadmin.com.ar/club-limpieza/api"
-        publicFiles = "https://api-test.nekoadmin.com.ar/club-limpieza/static"
+        host = "https://api-test.nekoadmin.com.ar/muni-lacalera/api"
+        publicFiles = "https://api-test.nekoadmin.com.ar/muni-lacalera/static"
     }
 } else {
-    host = "https://api-prod.nekoadmin.com.ar/club-limpieza/api"
-    publicFiles = "https://api-prod.nekoadmin.com.ar/club-limpieza/static"
+    host = "https://api-prod.nekoadmin.com.ar/muni-lacalera/api"
+    publicFiles = "https://api-prod.nekoadmin.com.ar/muni-lacalera/static"
 }
 
 const prodImages = publicFiles + "/images/products/"

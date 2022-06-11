@@ -12,7 +12,7 @@ export const ModalActivity = ({
 }) => {
     const [page, setPage] = useState(1)
     const [refresList, setRefreshList] = useState(false)
-    const [userSearch, setUserSearch] = useState(false)
+    const [userSearch, setUserSearch] = useState("")
     const [fromDate, setFromDate] = useState(moment(new Date()).format("YYYY-MM-DD"))
     const [toDate, setToDate] = useState(moment(new Date()).format("YYYY-MM-DD"))
 
@@ -47,6 +47,7 @@ export const ModalActivity = ({
                     toDate={toDate}
                     setToDate={setToDate}
                     modal={modal}
+                    setPage={setPage}
                 />
                 <List
                     dataPage={dataPage}

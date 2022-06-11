@@ -51,11 +51,16 @@ export const useAxiosGetList = (url, page, refresh, querys) => {
                 }
             }).then(res => {
                 if (res.data.status === 200) {
-                    if (res.data.body.data.length > 0) {
-                        setDataPage(res.data.body.data)
-                        setPagesObj(res.data.body.pagesObj)
+
+                    if (res.data.body.data) {
+                        if (res.data.body.data.length > 0) {
+                            setDataPage(res.data.body.data)
+                            setPagesObj(res.data.body.pagesObj)
+                        } else {
+                            setErrorList("No hay datos para mostrar")
+                        }
                     } else {
-                        setErrorList("No hay datos para mostrar")
+                        setDataPage(res.data.body)
                     }
                 } else {
                     setErrorList("No hay datos para mostrar")

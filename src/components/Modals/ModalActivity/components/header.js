@@ -4,14 +4,15 @@ import { Button, Col, FormGroup, Input, Label, Row } from 'reactstrap';
 import { useAxiosGetList } from '../../../../hooks/useAxiosGetList';
 
 const Header = ({
-    toggleRefresh,
     userSearch,
     setUserSearch,
     fromDate,
     setFromDate,
     toDate,
     setToDate,
-    modal
+    modal,
+    setPage,
+    toggleRefresh
 }) => {
 
     const {
@@ -32,7 +33,7 @@ const Header = ({
                         Usuario
                     </Label>
                     <Input type="select" value={userSearch} onChange={e => setUserSearch(e.target.value)}>
-                        <option value={false}>Todos los usuarios</option>
+                        <option value={""}>Todos los usuarios</option>
                         {errorList ? <></> :
                             (dataPage.length > 0) ?
                                 // eslint-disable-next-line
@@ -61,7 +62,10 @@ const Header = ({
                 </FormGroup>
             </Col>
             <Col md="2">
-                <Button color="primary" onClick={toggleRefresh} style={{ marginTop: "31px" }} >
+                <Button color="primary" onClick={() => {
+                    setPage(1)
+                    toggleRefresh()
+                }} style={{ marginTop: "31px" }} >
                     Listar
                 </Button>
             </Col>

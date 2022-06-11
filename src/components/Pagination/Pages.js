@@ -12,7 +12,7 @@ const PaginationComp = ({
 }) => {
     const [layoutPages, setLayoutPages] = useState(<></>)
     useEffect(() => {
-        listarPaginas()
+        listPages()
         // eslint-disable-next-line
     }, [page, data.cantTotal, data.totalPag])
 
@@ -23,7 +23,7 @@ const PaginationComp = ({
         }
     }
 
-    const pageNetx = (e) => {
+    const nextPage = (e) => {
         e.preventDefault()
         if (data.totalPag > page) {
             setPage(data.totalPag)
@@ -37,7 +37,7 @@ const PaginationComp = ({
         }
     }
 
-    const listarPaginas = () => {
+    const listPages = () => {
         if (data.totalPag) {
             setLayoutPages(
                 data.cantTotal.map((pageNumber, key) => {
@@ -79,7 +79,7 @@ const PaginationComp = ({
                         <PaginationItem className={page === data.totalPag ? "disabled" : ""}>
                             <PaginationLink
                                 href="#"
-                                onClick={e => pageNetx(e)}
+                                onClick={e => nextPage(e)}
                             >
                                 <i className="fas fa-angle-double-right" />
                                 <span className="sr-only">Último</span>

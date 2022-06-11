@@ -1,6 +1,6 @@
 import { TableList } from '../../../Lists/TableList';
 import React, { useEffect, useState } from 'react';
-import { Col, Row } from 'reactstrap';
+import { Col, Row, Spinner } from 'reactstrap';
 import ActivityRow from 'components/Lists/Rows/activityRow';
 import PaginationComp from 'components/Pagination/Pages';
 
@@ -34,11 +34,16 @@ const List = ({
     return (
         <>
             <Row>
-                <Col md="12">
-                    <TableList
-                        titlesArray={["Fecha", "Nombre", "Usuario", "Actividad"]}>
-                        {activityRows}
-                    </TableList>
+                <Col md="12" style={{ textAlign: "center" }}>
+                    {
+                        loadingList ?
+                            <Spinner style={{ width: "150px", height: "150px" }} />
+                            :
+                            <TableList
+                                titlesArray={["Fecha", "Nombre", "Usuario", "Actividad"]}>
+                                {activityRows}
+                            </TableList>
+                    }
                 </Col>
             </Row>
             <Row>
