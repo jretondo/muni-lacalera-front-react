@@ -1,7 +1,6 @@
-window.process = {};
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 import "assets/plugins/nucleo/css/nucleo.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
@@ -10,6 +9,8 @@ import AdminLayout from "layouts/admin.js";
 import AuthLayout from "layouts/auth.js";
 import AlertsProvider from 'context/alerts/provider';
 import SecureRoutesProvider from "context/secureRoutes/provider";
+
+window.process = {};
 
 ReactDOM.render(
   <BrowserRouter>

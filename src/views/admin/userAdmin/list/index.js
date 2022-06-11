@@ -1,33 +1,26 @@
 import UrlNodeServer from '../../../../api/nodeServer'
 import React, { useEffect, useState } from 'react'
-import { Card, CardBody, CardFooter, CardHeader, Col, Row, Spinner } from 'reactstrap'
-import FilaUsuario from 'components/Lists/Rows/usersRow'
-import BusquedaProdForm from 'components/Search/Search1'
-import Paginacion from 'components/Pagination/Pages'
-import ListTable from '../../../../components/Lists/ListadoTable'
+import { Button, Card, CardBody, CardFooter, CardHeader, Col, Row, Spinner } from 'reactstrap'
+import UserRow from 'components/Lists/Rows/usersRow'
+import { SearchFormComponent } from 'components/Search/Search1'
+import Pagination from 'components/Pagination/Pages'
+import { TableList } from '../../../../components/Lists/TableList'
 import { useAxiosGetList } from '../../../../hooks/useAxiosGetList';
 
-const titulos = ["Nombre", "Usuario", "Email", ""]
+const titlesArray = ["Nombre", "Usuario", "Email", "Telefóno", ""]
 
 const UserList = ({
-    nvaOffer,
-    setNvaOffer,
-    call,
-    setCall,
+    setNewForm,
     setDetBool,
-    setIdDetalle,
-    setPermisosBool,
-    setIdPermisos,
-    setUsuarioPermiso
+    setIdDetail,
+    setPermissionsBool,
+    setIdUser,
+    setUserName
 }) => {
-    const [loading, setloading] = useState(false)
-    const [listado, setListado] = useState([])
-    const [pagina, setPagina] = useState(1)
-    const [plantPaginas, setPlantPaginas] = useState([])
-    const [ultimaPag, setUltimaPag] = useState(0)
-    const [dataState, setDataState] = useState([])
-    const [busquedaBool, setBusquedaBool] = useState(false)
-    const [palabraBuscada, setPalabraBuscada] = useState("")
+    const [list, setList] = useState(<></>)
+    const [page, setPage] = useState(1)
+    const [refreshList, setRefreshList] = useState(false)
+    const [stringSearched, setStringSearched] = useState("")
 
     const {
         dataPage,
@@ -35,53 +28,49 @@ const UserList = ({
         errorList,
         loadingList
     } = useAxiosGetList(
-        UrlNodeServer.usuariosDir.usuarios,
-        pagina, busquedaBool, palabraBuscada
+        UrlNodeServer.usersDir.users,
+        page, refreshList, [{ query: stringSearched }]
     )
 
-    const listUsers = () => {
+    useEffect(() => {
         if (errorList) {
-            setDataState([])
-            setListado(
+            setList(
                 <tr style={{ textAlign: "center", width: "100%" }}>
                     <td> <span style={{ textAlign: "center", marginRight: "auto", marginLeft: "auto" }}> No hay productos cargados</span></td>
                 </tr>
             )
         } else {
-            setDataState(pageObj)
-            setListado(
+            setList(
                 dataPage.map((item, key) => {
-                    let primero
+                    let first
                     if (key === 0) {
-                        primero = true
+                        first = true
                     } else {
-                        primero = false
+                        first = false
                     }
                     return (
-                        <FilaUsuario
+                        <UserRow
                             id={key}
                             key={key}
                             item={item}
-                            setEsperar={setloading}
-                            nvaOffer={nvaOffer}
-                            setDetallesBool={setDetBool}
-                            setIdDetalle={setIdDetalle}
-                            primero={primero}
-                            pagina={pagina}
-                            setPagina={setPagina}
-                            setNvaOffer={setNvaOffer}
-                            setPermisosBool={setPermisosBool}
-                            setIdPermisos={setIdPermisos}
-                            setUsuarioPermiso={setUsuarioPermiso}
+                            refreshToggle={() => setRefreshList(!refreshList)}
+                            setDetBool={setDetBool}
+                            setIdDetail={setIdDetail}
+                            first={first}
+                            page={page}
+                            setPage={setPage}
+                            setPermissionsBool={setPermissionsBool}
+                            setIdUser={setIdUser}
+                            setUserName={setUserName}
                         />
                     )
                 })
             )
         }
-    }
-
-    useEffect(() => {
-        listUsers()
+        return () => {
+            setList(<></>)
+        }
+        // eslint-disable-next-line
     }, [dataPage, errorList, loadingList])
 
     return (
@@ -92,14 +81,12 @@ const UserList = ({
                         <h2 className="mb-0">Lista de Usuarios</h2>
                     </Col>
                     <Col md="8" style={{ textAlign: "right" }}>
-                        <BusquedaProdForm
-                            busquedaBool={busquedaBool}
-                            setPalabraBuscada={setPalabraBuscada}
-                            palabraBuscada={palabraBuscada}
-                            setBusquedaBool={setBusquedaBool}
-                            call={call}
-                            setCall={setCall}
-                            titulo="Buscar un Usuario"
+                        <SearchFormComponent
+                            setStringSearched={setStringSearched}
+                            stringSearched={stringSearched}
+                            setRefreshList={setRefreshList}
+                            refreshList={refreshList}
+                            title="Buscar un Usuario"
                         />
                     </Col>
                 </Row>
@@ -109,11 +96,11 @@ const UserList = ({
                     <Col>
                         {
                             !loadingList ?
-                                <ListTable
-                                    titlesArray={titulos}
+                                <TableList
+                                    titlesArray={titlesArray}
                                 >
-                                    {listado}
-                                </ListTable>
+                                    {list}
+                                </TableList>
                                 :
                                 <div style={{ textAlign: "center", marginTop: "0" }}>
                                     <Spinner type="grow" color="primary" style={{ width: "100px", height: "100px" }} />
@@ -125,28 +112,22 @@ const UserList = ({
             <CardFooter>
                 <Row>
                     <Col md="6">
-                        <button
-                            className="btn btn-primary"
+                        <Button
+                            color="primary"
                             onClick={e => {
                                 e.preventDefault();
-                                setNvaOffer(true);
+                                setNewForm(true);
                             }}
                         >
                             Nuevo Usuario
-                        </button>
+                        </Button>
                     </Col>
                     <Col>
-                        <Paginacion
-                            setPagina={setPagina}
-                            setCall={setCall}
-                            pagina={pagina}
-                            call={call}
-                            plantPaginas={plantPaginas}
-                            ultimaPag={ultimaPag}
-                            data={dataState}
-                            setPlantPaginas={setPlantPaginas}
-                            setUltimaPag={setUltimaPag}
-                        />
+                        {!pageObj ? null : <Pagination
+                            page={page}
+                            setPage={setPage}
+                            data={pageObj}
+                        />}
                     </Col>
                 </Row>
             </CardFooter>

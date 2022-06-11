@@ -12,10 +12,8 @@ const UserAdmin = () => {
     const [detBool, setDetBool] = useState(false)
     const [idDetail, setIdDetail] = useState(0)
     const [permissionsBool, setPermissionsBool] = useState(false)
-    const [idPermissions, setIdPermissions] = useState(0)
-    const [userPermissions, setUserPermissions] = useState("")
-
-    const [call, setCall] = useState(false)
+    const [idUser, setIdUser] = useState(0)
+    const [userName, setUserName] = useState("")
 
     const { setUrlRoute } = useContext(secureContext)
 
@@ -34,7 +32,7 @@ const UserAdmin = () => {
 
     useEffect(() => {
         setUrlRoute(UrlNodeServer.routesDir.sub.userAdmin)
-    }, [])
+    }, [setUrlRoute])
 
     return (
         <>
@@ -43,26 +41,23 @@ const UserAdmin = () => {
                 {
                     !newForm ?
                         <UserList
-                            nvaOffer={newForm}
-                            setNvaOffer={setNewForm}
-                            call={call}
-                            setCall={setCall}
+                            setNewForm={setNewForm}
                             setDetBool={setDetBool}
-                            setIdDetalle={setIdDetail}
-                            setPermisosBool={setPermissionsBool}
-                            setIdPermisos={setIdPermissions}
-                            setUsuarioPermiso={setUserPermissions}
+                            setIdDetail={setIdDetail}
+                            setPermissionsBool={setPermissionsBool}
+                            setIdUser={setIdUser}
+                            setUserName={setUserName}
                         /> :
                         permissionsBool ?
                             <UserPermissions
-                                setNvaOffer={setNewForm}
-                                idPermisos={idPermissions}
-                                usuarioPermiso={userPermissions}
+                                setNewForm={setNewForm}
+                                idUser={idUser}
+                                userName={userName}
                             />
                             :
                             <UserForm
-                                setNvaOffer={setNewForm}
-                                idDetalle={idDetail}
+                                setNewForm={setNewForm}
+                                idDetail={idDetail}
                                 detBool={detBool}
                             />
                 }

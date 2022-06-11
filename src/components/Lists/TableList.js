@@ -3,7 +3,7 @@ import {
     Table
 } from "reactstrap"
 
-const ListTable = ({ titlesArray, children }) => {
+export const TableList = ({ titlesArray, children }) => {
 
     return (
         <Table className="align-items-center table-flush" responsive>
@@ -24,5 +24,3 @@ const ListTable = ({ titlesArray, children }) => {
         </Table>
     )
 }
-
-export default ListTable

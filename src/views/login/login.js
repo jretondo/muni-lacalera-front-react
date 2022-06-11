@@ -23,24 +23,25 @@ import alertsContext from 'context/alerts';
 const Login = () => {
   const [user, setUser] = useState("")
   const [pass, setPass] = useState("")
-  const [verPassToggle, setVerPassToggle] = useState(false)
+  const [seePassToggle, setSeePassToggle] = useState(false)
   const [typeInpPass, setTypeInpPass] = useState("password")
   const [rememberCred, setRememberCred] = useState(false)
   const [savedEmail, setSavedEmail] = useState(false)
   const [isLog, setIsLog] = useState(false)
   const [nvaPass, setNvaPass] = useState(false)
-  const [esperar, setEsperar] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const { newAlert } = useContext(alertsContext)
 
   useEffect(() => {
-    localStorage.removeItem("Nombre")
-    localStorage.removeItem("Apellido")
+    localStorage.removeItem("name")
+    localStorage.removeItem("lastName")
     localStorage.removeItem("user-token")
+    localStorage.removeItem("admin")
     if (!isLog) {
-      const emailGuardado = localStorage.getItem("savedEmail")
-      if (emailGuardado) {
-        setUser(emailGuardado)
+      const savedEmail = localStorage.getItem("savedEmail")
+      if (savedEmail) {
+        setUser(savedEmail)
         setRememberCred(true)
         setSavedEmail(true)
         try {
@@ -62,7 +63,7 @@ const Login = () => {
   }, [])
 
 
-  const ingresar = async (e) => {
+  const enter = async (e) => {
     e.preventDefault();
     const data = {
       username: user,
@@ -73,11 +74,12 @@ const Login = () => {
         const response = res.data
         const status = parseInt(response.status)
         if (status === 200) {
-          setEsperar(false)
+          setLoading(false)
           const provisory = parseInt(res.data.body.provisory)
           const userData = res.data.body.userData
-          localStorage.setItem("Nombre", userData.nombre)
-          localStorage.setItem("Apellido", userData.apellido)
+          localStorage.setItem("name", userData.name)
+          localStorage.setItem("lastName", userData.lastname)
+          localStorage.setItem("admin", userData.admin)
           if (provisory) {
             if (rememberCred) {
               localStorage.setItem("savedEmail", user)
@@ -106,12 +108,12 @@ const Login = () => {
 
   const togglePass = (e) => {
     e.preventDefault()
-    if (verPassToggle) {
+    if (seePassToggle) {
       setTypeInpPass("password")
     } else {
       setTypeInpPass("text")
     }
-    setVerPassToggle(!verPassToggle)
+    setSeePassToggle(!seePassToggle)
   }
 
   const changeUser = (e) => {
@@ -133,7 +135,7 @@ const Login = () => {
     return (
       <Redirect
         className="text-light"
-        to={process.env.PUBLIC_URL + "/auth/nvapass"}
+        to={process.env.PUBLIC_URL + "/auth/new-pass"}
       />
     )
   } else {
@@ -145,9 +147,9 @@ const Login = () => {
               <div className="text-center text-muted mb-4">
                 <span style={{ fontWeight: "bold" }}>Ingrese con su credenciales:</span>
               </div>
-              <Form role="form" onSubmit={e => ingresar(e)}>
+              <Form role="form" onSubmit={e => enter(e)}>
                 {
-                  esperar ?
+                  loading ?
                     <div style={{ textAlign: "center" }}>
                       <Spinner type="grow" color="light" /> </div> :
                     <>
@@ -195,7 +197,7 @@ const Login = () => {
                           <Input placeholder="Contraseña" type={typeInpPass} autoComplete="new-password" value={pass} onChange={e => setPass(e.target.value)} id="passInp" required />
                           <InputGroupAddon addonType="prepend">
                             <InputGroupText>
-                              <a href="/xa" id="verPass" onClick={e => togglePass(e)}> <i className="fas fa-eye" style={verPassToggle ? { color: "red" } : { color: "gray" }}></i></a>
+                              <a href="/xa" id="verPass" onClick={e => togglePass(e)}> <i className="fas fa-eye" style={seePassToggle ? { color: "red" } : { color: "gray" }}></i></a>
                             </InputGroupText>
                           </InputGroupAddon>
                         </InputGroup>
@@ -229,7 +231,7 @@ const Login = () => {
             <Col xs="6">
               <NavLink
                 className="text-light"
-                to={process.env.PUBLIC_URL + "/auth/forgotpass"}
+                to={process.env.PUBLIC_URL + "/auth/forgot-pass"}
                 tag={Link}
               >
                 <small>Olvidé mi contraseña</small>

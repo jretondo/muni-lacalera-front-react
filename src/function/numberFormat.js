@@ -1,4 +1,4 @@
-function numberFormat(amount, decimalCount = 2, decimal = ",", thousands = ".") {
+export function numberFormat(amount, decimalCount = 2, decimal = ",", thousands = ".") {
     try {
         decimalCount = Math.abs(decimalCount);
         decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
@@ -13,5 +13,3 @@ function numberFormat(amount, decimalCount = 2, decimal = ",", thousands = ".") 
         console.log(e)
     }
 };
-
-module.exports = numberFormat

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import axios from 'axios'
 import UrlNodeServer from '../../../api/nodeServer'
 import {
@@ -8,32 +8,27 @@ import {
     DropdownToggle
 } from "reactstrap"
 import swal from 'sweetalert'
+import alertsContext from 'context/alerts';
+import '../shimmer.css';
 
 const UserRow = ({
     id,
     item,
-    setActividadStr,
-    nvaActCall,
-    setNvaActCall,
-    alertar,
-    setAlertar,
-    setMsgStrong,
-    setMsgGralAlert,
-    setSuccessAlert,
-    setCall,
-    call,
-    setEsperar,
-    setDetallesBool,
-    setIdDetalle,
-    primero,
-    pagina,
-    setPagina,
-    setPermisosBool,
-    setIdPermisos,
-    setUsuarioPermiso
+    setDetBool,
+    refreshToggle,
+    setIdDetail,
+    first,
+    page,
+    setPage,
+    setPermissionsBool,
+    setIdUser,
+    setUserName
 }) => {
+    const [loading, setLoading] = useState(false)
+    const [backPage, setBackPage] = useState(false)
+    const { newAlert, newActivity } = useContext(alertsContext)
 
-    const deleteUser = async (e, id, name, primero, pagina) => {
+    const deleteUser = async (e, id, name, first, page) => {
         e.preventDefault()
         swal({
             title: "Eliminar al usuario " + name + "!",
@@ -47,70 +42,65 @@ const UserRow = ({
         })
             .then(async (willDelete) => {
                 if (willDelete) {
-                    setEsperar(true)
-                    await axios.delete(`${UrlNodeServer.usuariosDir.usuarios}/${id}`, {
+                    setLoading(true)
+                    await axios.delete(`${UrlNodeServer.usersDir.users}/${id}`, {
                         headers: {
                             'Authorization': 'Bearer ' + localStorage.getItem('user-token')
                         }
-                    })
-                        .then(res => {
-                            const status = parseInt(res.data.status)
-                            if (status === 200) {
-                                if (primero) {
-                                    if (pagina > 1) {
-                                        setPagina(parseInt(pagina - 1))
-                                    }
+                    }).then(res => {
+                        const status = parseInt(res.data.status)
+                        if (status === 200) {
+                            if (first) {
+                                if (page > 1) {
+                                    setBackPage(true)
                                 }
-                                setActividadStr("El usuario ha eliminado el usuario '" + name + "'")
-                                setNvaActCall(!nvaActCall)
-                                setMsgStrong("Usuario eliminado con éxito!")
-                                setMsgGralAlert("")
-                                setSuccessAlert(true)
-                                setAlertar(!alertar)
-                                setCall(!call)
-                                setEsperar(false)
-                            } else {
-                                setEsperar(false)
-                                setMsgStrong("Hubo un error!")
-                                setMsgGralAlert(" Intente nuevamente.")
-                                setSuccessAlert(false)
-                                setAlertar(!alertar)
                             }
-                        })
-                        .catch(() => {
-                            setEsperar(false)
-                            setMsgStrong("Hubo un error!")
-                            setMsgGralAlert(" Intente nuevamente.")
-                            setSuccessAlert(false)
-                            setAlertar(!alertar)
-                        })
+                            newActivity(`Se ha eliminado alusuario ${item.name} ${item.lastname} (id: ${item.user})`)
+                            newAlert("success", "Usuario eliminado con éxito!", "")
+                        } else {
+                            newAlert("danger", "Hubo un error!", "Intentelo nuevamente")
+                        }
+                    }).catch(() => {
+                        newAlert("danger", "Hubo un error!", "Intentelo nuevamente")
+                    }).finally(() => {
+                        setLoading(false)
+                        if (backPage) {
+                            setPage(parseInt(page - 1))
+                            setBackPage(false)
+                        } else {
+                            refreshToggle()
+                        }
+                    })
                 }
             });
     }
 
     const details = (e, id) => {
         e.preventDefault()
-        setIdDetalle(id)
-        setDetallesBool(true)
+        setIdDetail(id)
+        setDetBool(true)
     }
 
     const givePermissions = (e, id, name) => {
         e.preventDefault()
-        setUsuarioPermiso(name)
-        setIdPermisos(id)
-        setPermisosBool(true)
+        setUserName(name)
+        setIdUser(id)
+        setPermissionsBool(true)
     }
 
     return (
-        <tr key={id}>
+        <tr key={id} className={loading ? "shimmer" : ""} >
             <td style={{ textAlign: "center" }}>
-                {item.nombre + " " + item.apellido}
+                {item.name + " " + item.lastname}
             </td>
             <td style={{ textAlign: "center" }}>
-                {item.usuario}
+                {item.name}
             </td>
             <td style={{ textAlign: "center" }}>
                 {item.email}
+            </td>
+            <td style={{ textAlign: "center" }}>
+                {item.tel}
             </td>
             <td className="text-right">
                 <UncontrolledDropdown>
@@ -134,14 +124,14 @@ const UserRow = ({
                         </DropdownItem>
                         <DropdownItem
                             href="#pablo"
-                            onClick={e => givePermissions(e, item.id, item.nombre + " " + item.apellido)}
+                            onClick={e => givePermissions(e, item.id, item.name + " " + item.lastname)}
                         >
                             <i className="fas fa-id-card"></i>
                             Dar Permisos
                         </DropdownItem>
                         <DropdownItem
                             href="#pablo"
-                            onClick={e => deleteUser(e, item.id, item.nombre + " " + item.apellido, primero, pagina)}
+                            onClick={e => deleteUser(e, item.id, item.name + " " + item.lastname, first, page)}
                         >
                             <i className="fas fa-trash-alt"></i>
                             Eliminar

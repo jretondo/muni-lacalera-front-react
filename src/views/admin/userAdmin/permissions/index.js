@@ -1,21 +1,21 @@
 import UrlNodeServer from '../../../../api/nodeServer'
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Card, CardBody, CardHeader, Col, Container, Input, Row, Spinner } from 'reactstrap'
+import alertsContext from 'context/alerts';
 
 const UserPermissions = ({
-    nvaActCall,
-    setNvaActCall,
-    setActividadStr,
-    setNvaOffer,
-    idPermisos,
-    usuarioPermiso
+    setNewForm,
+    idUser,
+    userName
 }) => {
-    const [permissionsDisp, setPermissionsDisp] = useState([])
-    const [nvosPermisos, setNvosPermisos] = useState([])
-    const [plantPerDisp, setPlantPerDisp] = useState(<></>)
-    const [plantUsuPerm, setPlantUsuPerm] = useState(<></>)
+    const [permissionsAvailable, setPermissionsAvailable] = useState([])
+    const [newPermissions, setNewPermissions] = useState([])
+    const [layoutPermissions, setLayoutPermissions] = useState(<></>)
+    const [layoutUserPermissions, setLayoutUserPermissions] = useState(<></>)
     const [loading, setLoading] = useState(false)
+
+    const { newAlert, newActivity } = useContext(alertsContext)
 
     useEffect(() => {
         ListPermissionsUsu()
@@ -25,67 +25,63 @@ const UserPermissions = ({
     useEffect(() => {
         PlantPermissions()
         // eslint-disable-next-line
-    }, [nvosPermisos.length, permissionsDisp.length])
+    }, [newPermissions.length, permissionsAvailable.length])
 
     const ListPermissionsUsu = async () => {
         setLoading(true)
-        await axios.get(`${UrlNodeServer.permissionsDir.permissions}/${idPermisos}`, {
+        await axios.get(`${UrlNodeServer.permissionsDir.permissions}/${idUser}`, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token')
             }
+        }).then(res => {
+            setLoading(false)
+            if (res.data.status === 200) {
+                setPermissionsAvailable(res.data.body.permissions)
+                setNewPermissions(res.data.body.userPermissions)
+            } else {
+                setPermissionsAvailable([])
+                setNewPermissions([])
+            }
+        }).catch(() => {
+            setLoading(false)
+            setPermissionsAvailable([])
+            setNewPermissions([])
         })
-            .then(res => {
-                setLoading(false)
-                const respuesta = res.data
-                const status = parseInt(respuesta.status)
-                if (status === 200) {
-                    setPermissionsDisp(respuesta.body.permisos)
-                    setNvosPermisos(respuesta.body.userPermissions)
-                } else {
-                    setPermissionsDisp([])
-                    setNvosPermisos([])
-                }
-            })
-            .catch(() => {
-                setLoading(false)
-                setPermissionsDisp([])
-                setNvosPermisos([])
-            })
     }
 
     const DeletePermission = (key, item) => {
-        let list = nvosPermisos
+        let list = newPermissions
         list.splice(key, 1)
-        setNvosPermisos(list)
-        let list2 = permissionsDisp
+        setNewPermissions(list)
+        let list2 = permissionsAvailable
         list2.push({
             id: item.id,
             module_name: item.module_name
         })
-        setPermissionsDisp(list2)
+        setPermissionsAvailable(list2)
         PlantPermissions()
     }
 
     const AddPermissions = (key, item) => {
-        let list = permissionsDisp
+        let list = permissionsAvailable
         list.splice(key, 1)
-        setPermissionsDisp(list)
-        let list2 = nvosPermisos
+        setPermissionsAvailable(list)
+        let list2 = newPermissions
         list2.push({
             id: item.id,
-            id_user: idPermisos,
+            id_user: idUser,
             id_permission: item.id,
             module_name: item.module_name
         })
-        setNvosPermisos(list2)
+        setNewPermissions(list2)
         PlantPermissions()
     }
 
     const PlantPermissions = () => {
-        if (nvosPermisos.length > 0) {
-            setPlantUsuPerm(
+        if (newPermissions.length > 0) {
+            setLayoutUserPermissions(
                 // eslint-disable-next-line
-                nvosPermisos.map((item, key) => {
+                newPermissions.map((item, key) => {
                     return (
                         <Row key={key} style={{ marginTop: "15px" }}>
                             <Col md="10">
@@ -107,13 +103,13 @@ const UserPermissions = ({
                 })
             )
         } else {
-            setPlantUsuPerm(<></>)
+            setLayoutUserPermissions(<></>)
         }
 
-        if (permissionsDisp.length > 0) {
-            setPlantPerDisp(
+        if (permissionsAvailable.length > 0) {
+            setLayoutPermissions(
                 // eslint-disable-next-line
-                permissionsDisp.map((item, key) => {
+                permissionsAvailable.map((item, key) => {
                     return (
                         <Row key={key} style={{ marginTop: "15px" }}>
                             <Col md="10">
@@ -135,21 +131,21 @@ const UserPermissions = ({
                 })
             )
         } else {
-            setPlantPerDisp(<></>)
+            setLayoutPermissions(<></>)
         }
     }
 
-    const NvoPermisos = async () => {
-        const permisos = await new Promise((resolve, reject) => {
+    const newPermission = async () => {
+        const permissions = await new Promise((resolve, reject) => {
             setLoading(true)
             let list = []
-            if (nvosPermisos.length > 0) {
+            if (newPermissions.length > 0) {
                 // eslint-disable-next-line
-                nvosPermisos.map((item, key) => {
+                newPermissions.map((item, key) => {
                     list.push({
-                        idPermiso: item.id_permission
+                        idPermission: item.id_permission
                     })
-                    if (key === nvosPermisos.length - 1) {
+                    if (key === newPermissions.length - 1) {
                         resolve(list)
                     }
                 })
@@ -159,29 +155,27 @@ const UserPermissions = ({
         })
 
         const data = {
-            permisos: permisos,
-            idUser: idPermisos
+            permissions: permissions,
+            idUser: idUser
         }
 
         await axios.post(UrlNodeServer.permissionsDir.permissions, data, {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem('user-token')
             }
+        }).then(res => {
+            if (res.data.status === 201) {
+                newAlert("success", "Permisos modificados con éxito!", "")
+                newActivity(`Se le han modificado los permisos de acceso al usuario ${userName} (id: ${idUser})`)
+            } else {
+                newAlert("danger", "Hubo un error!", "Intente nuevamente!")
+            }
+        }).catch(() => {
+            newAlert("danger", "Hubo un error!", "Intente nuevamente!")
+        }).finally(() => {
+            setLoading(false)
+            setNewForm(false)
         })
-            .then(res => {
-                setLoading(false)
-                const respuesta = res.data
-                const status = parseInt(respuesta.status)
-                if (status === 201) {
-                    setActividadStr("El usuario a modificado los permisos del ususario con id " + idPermisos)
-                    setNvaActCall(!nvaActCall)
-                    setNvaOffer(false)
-                } else {
-                }
-            })
-            .catch(() => {
-                setLoading(false)
-            })
     }
 
     if (loading) {
@@ -196,14 +190,14 @@ const UserPermissions = ({
                 <CardHeader>
                     <Row>
                         <Col md="10">
-                            <h2>{`Permisos para el usuario ${usuarioPermiso}`}</h2>
+                            <h2>{`Permisos para el usuario ${userName}`}</h2>
                         </Col>
                         <Col md="2" style={{ textAlign: "right" }}>
                             <button
                                 className="btn btn-danger"
                                 onClick={e => {
                                     e.preventDefault();
-                                    setNvaOffer(false);
+                                    setNewForm(false);
                                 }}
                             >X</button>
                         </Col>
@@ -216,7 +210,7 @@ const UserPermissions = ({
                                 <h2>Permisos otorgados al usuario:</h2>
                             </Col>
                         </Row>
-                        {plantUsuPerm}
+                        {layoutUserPermissions}
                     </Container>
 
                     <Container style={{ marginTop: "50px" }} >
@@ -225,7 +219,7 @@ const UserPermissions = ({
                                 <h2>Permisos disponibles para el usuario:</h2>
                             </Col>
                         </Row>
-                        {plantPerDisp}
+                        {layoutPermissions}
                     </Container>
 
                     <Container>
@@ -236,7 +230,7 @@ const UserPermissions = ({
                                     style={{ width: "200px", margin: "25px" }}
                                     onClick={e => {
                                         e.preventDefault();
-                                        NvoPermisos();
+                                        newPermission();
                                     }}
                                 >
                                     Confirmar Permisos
@@ -247,7 +241,7 @@ const UserPermissions = ({
                                     style={{ width: "200px", margin: "25px" }}
                                     onClick={e => {
                                         e.preventDefault();
-                                        setNvaOffer(false);
+                                        setNewForm(false);
                                     }}
                                 >
                                     Cancelar

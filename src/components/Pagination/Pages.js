@@ -1,63 +1,53 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Pagination,
     PaginationItem,
     PaginationLink,
 } from "reactstrap"
 
-const Paginacion = ({
-    plantPaginas,
-    setPlantPaginas,
-    ultimaPag,
-    setUltimaPag,
-    pagina,
-    setPagina,
-    setCall,
-    call,
+const PaginationComp = ({
+    page,
+    setPage,
     data
 }) => {
-
+    const [layoutPages, setLayoutPages] = useState(<></>)
     useEffect(() => {
-        ListarPaginas()
+        listarPaginas()
         // eslint-disable-next-line
-    }, [pagina, ultimaPag, data.totalPag, data.cantTotal])
+    }, [page, data.cantTotal, data.totalPag])
 
-    const PagePrev = (e) => {
+    const pagePrev = (e) => {
         e.preventDefault()
-        if (pagina > 1) {
-            setPagina(1)
-            setCall(!call)
+        if (page > 1) {
+            setPage(1)
         }
     }
 
-    const PageNetx = (e) => {
+    const pageNetx = (e) => {
         e.preventDefault()
-        if (ultimaPag > pagina) {
-            setPagina(ultimaPag)
-            setCall(!call)
+        if (data.totalPag > page) {
+            setPage(data.totalPag)
         }
     }
 
-    const ChangePage = (e, page) => {
+    const changePage = (e, newPage) => {
         e.preventDefault()
-        if (page !== pagina) {
-            setPagina(page)
-            setCall(!call)
+        if (page !== newPage) {
+            setPage(newPage)
         }
     }
 
-    const ListarPaginas = () => {
+    const listarPaginas = () => {
         if (data.totalPag) {
-            setUltimaPag(data.totalPag)
-            setPlantPaginas(
-                data.cantTotal.map((paginaList, key) => {
+            setLayoutPages(
+                data.cantTotal.map((pageNumber, key) => {
                     return (
-                        <PaginationItem className={pagina === paginaList ? "active" : ""} key={key}>
+                        <PaginationItem className={page === pageNumber ? "active" : ""} key={key}>
                             <PaginationLink
                                 href="#"
-                                onClick={e => ChangePage(e, paginaList)}
+                                onClick={e => changePage(e, pageNumber)}
                             >
-                                {paginaList}
+                                {pageNumber}
                             </PaginationLink>
                         </PaginationItem>
                     )
@@ -65,40 +55,44 @@ const Paginacion = ({
             )
         }
     }
+    if (data.totalPag) {
+        return (
+            <>
+                <nav aria-label="...">
+                    <Pagination
+                        className="pagination justify-content-end mb-0"
+                        listClassName="justify-content-end mb-0"
+                    >
+                        <PaginationItem className={page === 1 ? "disabled" : ""}>
+                            <PaginationLink
+                                href="#"
+                                onClick={e => pagePrev(e)}
+                                tabIndex="-1"
+                            >
+                                <i className="fas fa-angle-double-left" />
+                                <span className="sr-only">Primero</span>
+                            </PaginationLink>
+                        </PaginationItem>
 
-    return (
-        <>
-            <nav aria-label="...">
-                <Pagination
-                    className="pagination justify-content-end mb-0"
-                    listClassName="justify-content-end mb-0"
-                >
-                    <PaginationItem className={pagina === 1 ? "disabled" : ""}>
-                        <PaginationLink
-                            href="#"
-                            onClick={e => PagePrev(e)}
-                            tabIndex="-1"
-                        >
-                            <i className="fas fa-angle-double-left" />
-                            <span className="sr-only">Primero</span>
-                        </PaginationLink>
-                    </PaginationItem>
+                        {layoutPages}
 
-                    {plantPaginas}
+                        <PaginationItem className={page === data.totalPag ? "disabled" : ""}>
+                            <PaginationLink
+                                href="#"
+                                onClick={e => pageNetx(e)}
+                            >
+                                <i className="fas fa-angle-double-right" />
+                                <span className="sr-only">Último</span>
+                            </PaginationLink>
+                        </PaginationItem>
+                    </Pagination>
+                </nav>
+            </>
+        )
+    } else {
+        return null
+    }
 
-                    <PaginationItem className={pagina === ultimaPag ? "disabled" : ""}>
-                        <PaginationLink
-                            href="#"
-                            onClick={e => PageNetx(e)}
-                        >
-                            <i className="fas fa-angle-double-right" />
-                            <span className="sr-only">Último</span>
-                        </PaginationLink>
-                    </PaginationItem>
-                </Pagination>
-            </nav>
-        </>
-    )
 }
 
-export default Paginacion
+export default PaginationComp

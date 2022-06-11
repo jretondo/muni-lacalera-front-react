@@ -21,23 +21,22 @@ import alertsContext from 'context/alerts';
 
 const ForgPass = () => {
   const [email, setEmail] = useState("")
-  const [esperar, setEsperar] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
 
-  const { newAlert } = useContext(alertsContext)
+  const { newAlert, newActivity } = useContext(alertsContext)
 
-  const recuperarPass = async () => {
-    const datos = {
+  const passRecovery = async () => {
+    const data = {
       email: email
     }
-    setEsperar(true)
-    await axios.patch(UrlNodeServer.authDir.auth, datos)
+    setLoading(true)
+    await axios.patch(UrlNodeServer.authDir.auth, data)
       .then(res => {
-        setEsperar(false)
-        const respuesta = res.data
-        const estatus = parseInt(respuesta.status)
-        if (estatus === 200) {
-          newAlert("success", "Contraseña nueva!", "Su contraseña ha sido cambiada con éxito.")
+        setLoading(false)
+        if (res.data.status === 200) {
+          newActivity("El usuario ha recuperado la contraseña")
+          newAlert("success", "Contraseña nueva!", "La nueva contraseña ha sido enviada a su casilla de email.")
           setDone(true)
         } else {
           newAlert("danger", "Error inesperado!", "Intente nuevamente.")
@@ -65,13 +64,13 @@ const ForgPass = () => {
                 <span style={{ fontWeight: "bold" }}>Ingrese su casilla de correo:</span>
               </div>
               {
-                esperar ?
+                loading ?
                   <Col md="12" style={{ textAlign: "center" }}>
                     <Spinner color="primary" style={{ width: "250px", height: "250px" }} />
                   </Col> :
                   <Form onSubmit={e => {
                     e.preventDefault()
-                    recuperarPass()
+                    passRecovery()
                   }}>
                     <FormGroup className="mb-3">
                       <InputGroup className="input-group-alternative">

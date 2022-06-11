@@ -16,7 +16,7 @@ var routes = [
     icon: "ni ni-single-02 text-blue",
     component: UserAdmin,
     layout: process.env.PUBLIC_URL + "/admin",
-    id: 0
+    id: 1
   }
 ];
 export default routes;

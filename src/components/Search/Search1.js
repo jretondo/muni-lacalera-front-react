@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
     Form,
     FormGroup,
@@ -10,39 +10,24 @@ import {
 } from "reactstrap"
 import Col from 'reactstrap/lib/Col'
 
-const BusquedaProdForm = ({
-    setPalabraBuscada,
-    palabraBuscada,
-    setBusquedaBool,
-    call,
-    setCall,
-    titulo
+export const SearchFormComponent = ({
+    setStringSearched,
+    stringSearched,
+    setRefreshList,
+    refreshList,
+    title
 }) => {
-    const [primera, setPrimera] = useState(false)
 
-    const BuscarPalabra = () => {
-        setBusquedaBool(true)
-        setCall(!call)
+    const searchWord = () => {
+        setRefreshList(!refreshList)
     }
 
     const changeText = (e) => {
-        if (palabraBuscada.length > 0) {
-            setPrimera(true)
+        if (e.target.value.length === 0) {
+            setRefreshList(!refreshList)
         }
-        setPalabraBuscada(e.target.value)
+        setStringSearched(e.target.value)
     }
-
-    useEffect(() => {
-        if (palabraBuscada.length === 0) {
-            if (primera) {
-                BuscarPalabra()
-            }
-        }
-    }, [palabraBuscada])
-
-    useEffect(() => {
-        document.getElementById("inp-busqueda").focus()
-    }, [])
 
     return (
         <Form
@@ -50,13 +35,13 @@ const BusquedaProdForm = ({
             style={{ textAlign: "right" }}
             onSubmit={e => {
                 e.preventDefault()
-                BuscarPalabra(e)
+                searchWord()
             }}
         >
             <FormGroup className="mb-0" style={{ marginLeft: "auto" }}>
                 <Row>
                     <Col style={{ textAlign: "center", paddingTop: "16px", paddingRight: 0 }} >
-                        <span>{titulo}</span>
+                        <span>{title}</span>
                     </Col>
                     <Col md="6" >
                         <InputGroup className="input-group-alternative">
@@ -69,9 +54,9 @@ const BusquedaProdForm = ({
                                 placeholder="Buscar"
                                 type="text"
                                 style={{ color: "black" }}
-                                value={palabraBuscada}
+                                value={stringSearched}
                                 onChange={e => changeText(e)}
-                                id="inp-busqueda"
+                                id="inp-search"
                             />
                         </InputGroup>
                     </Col>
@@ -79,7 +64,4 @@ const BusquedaProdForm = ({
             </FormGroup>
         </Form>
     )
-
 }
-
-export default BusquedaProdForm

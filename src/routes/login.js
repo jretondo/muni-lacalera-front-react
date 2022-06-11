@@ -11,14 +11,14 @@ var routes = [
     layout: process.env.PUBLIC_URL + "/auth"
   },
   {
-    path: "/nvapass",
+    path: "/new-pass",
     name: "New Pass",
     icon: "ni ni-circle-08 text-pink",
     component: NvaPass,
     layout: process.env.PUBLIC_URL + "/auth"
   },
   {
-    path: "/forgotpass",
+    path: "/forgot-pass",
     name: "Forgot Pass",
     icon: "ni ni-circle-08 text-pink",
     component: ForgotPass,

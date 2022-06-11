@@ -1,20 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import AlertsContext from './index';
 import React from 'react';
 import Alert from 'components/Alerts/Alert1';
+import axios from 'axios';
+import UrlNodeServer from '../../api/nodeServer';
 
 const AlertsProvider = ({ children }) => {
     const [alerts, setAlerts] = useState([])
 
-    const newAlert = (type, strong, msg) => {
+    const newAlert = useCallback((type, strong, msg) => {
         setAlerts((al) => [...al, {
             type,
             strong,
             msg
         }])
-    }
+    }, [])
 
-    const removeAlert = () => {
+    const removeAlert = useCallback(() => {
         if (alerts.length > 1) {
             let alrt = alerts
             alrt.splice(0, 1)
@@ -22,6 +24,20 @@ const AlertsProvider = ({ children }) => {
         } else {
             setAlerts([])
         }
+    }, [alerts])
+
+    const newActivity = async (activityDescr) => {
+        const data = {
+            activityDescr
+        }
+        await axios.post(UrlNodeServer.activityDir.activity, data, {
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
+            }
+        }).then(() => {
+        }).catch(error => {
+            console.error(error.message);
+        })
     }
 
     useEffect(() => {
@@ -33,13 +49,14 @@ const AlertsProvider = ({ children }) => {
                 clearInterval(idTimer)
             }
         }
-    }, [newAlert])
+    }, [newAlert, alerts.length, removeAlert])
 
     return (
         <AlertsContext.Provider value={{
-            newAlert
+            newAlert,
+            newActivity
         }}>
-            {alerts.map((item, key) => {
+            {alerts.length > 0 ? alerts.map((item, key) => {
                 return (
                     <Alert
                         type={item.type}
@@ -49,7 +66,7 @@ const AlertsProvider = ({ children }) => {
                         key={key}
                     />
                 )
-            })}
+            }) : null}
             {children}
         </AlertsContext.Provider>
     )

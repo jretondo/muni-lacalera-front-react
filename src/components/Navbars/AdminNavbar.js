@@ -12,25 +12,29 @@ import {
   Media
 } from "reactstrap";
 import User from 'assets/img/theme/default-avatar.png';
+import { ModalMyProfile } from "../Modals/ModalProfile";
+import { ModalActivity } from "components/Modals/ModalActivity";
 
 const AdminNavbar = (props) => {
-  const [nombre, setNombre] = useState("")
-  const [apellido, setApellido] = useState("")
-  const [salir, setSalir] = useState(false)
+  const [name, setName] = useState("")
+  const [lastname, setLastname] = useState("")
+  const [isAdmin, setIsAdmin] = useState(0)
+  const [exit, setExit] = useState(false)
+  const [modalProfile, setModalProfile] = useState(false)
+  const [modalAct, setModalAct] = useState(false)
 
   useEffect(() => {
-    setTimeout(() => {
-      setNombre(localStorage.getItem("Nombre"))
-      setApellido(localStorage.getItem("Apellido"))
-    }, 1500);
+    setName(localStorage.getItem("name"))
+    setLastname(localStorage.getItem("lastName"))
+    setIsAdmin(parseInt(localStorage.getItem("admin")))
   }, [])
 
   const SalirBtn = (e) => {
     e.preventDefault()
-    setSalir(true)
+    setExit(true)
   }
 
-  if (salir) {
+  if (exit) {
     return (
       <Redirect
         className="text-light"
@@ -60,7 +64,7 @@ const AdminNavbar = (props) => {
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        {nombre} {" "}{apellido}
+                        {name} {" "}{lastname}
                       </span>
                     </Media>
                   </Media>
@@ -69,17 +73,26 @@ const AdminNavbar = (props) => {
                   <DropdownItem className="noti-title" header tag="div">
                     <h6 className="text-overflow m-0">Bienvenido!</h6>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
+                  <DropdownItem to="/admin/user-profile" onClick={e => {
+                    e.preventDefault()
+                    setModalProfile(true)
+                  }}>
                     <i className="ni ni-single-02" />
                     <span>Mi perfil</span>
                   </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
-                    <i className="ni ni-calendar-grid-58" />
-                    <span>Actividad</span>
-                  </DropdownItem>
-                  <DropdownItem to="/admin/user-profile" tag={Link}>
+                  {
+                    isAdmin === 1 ?
+                      <DropdownItem to="/admin/user-profile" onClick={e => {
+                        e.preventDefault()
+                        setModalAct(true)
+                      }}>
+                        <i className="ni ni-calendar-grid-58" />
+                        <span>Actividad</span>
+                      </DropdownItem> : null
+                  }
+                  <DropdownItem to="/admin/user-profile" >
                     <i className="ni ni-support-16" />
-                    <span>Soporte</span>
+                    <a href="https://api.whatsapp.com/send?phone=5493512009913&text=Hola%20Javier%2C%20estoy%20teniendo%20problemas%20con%20la%20aplicaci%C3%B3n.%20Solicito%20asistencia%20para%20solucionarlo.%20Gracias!%0AAplicaci%C3%B3n%3A%20%22Municipalidad%20de%20La%20Calera%22" target="_blank" rel="noreferrer" style={{ color: "black" }}><span>Soporte</span></a>
                   </DropdownItem>
                   <DropdownItem divider />
                   <DropdownItem href="#pablo" onClick={e => SalirBtn(e)}>
@@ -91,6 +104,14 @@ const AdminNavbar = (props) => {
             </Nav>
           </Container>
         </Navbar>
+        <ModalMyProfile
+          modal={modalProfile}
+          toggle={() => setModalProfile(!modalProfile)}
+        />
+        <ModalActivity
+          modal={modalAct}
+          toggle={() => setModalAct(!modalAct)}
+        />
       </>
     )
   }

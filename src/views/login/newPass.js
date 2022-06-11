@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useContext } from "react";
 import {
   Button,
   Card,
@@ -16,7 +16,7 @@ import {
 } from "reactstrap";
 import { Link, Redirect } from "react-router-dom";
 import UrlNodeServer from '../../api/nodeServer'
-import { seguridadClave } from 'function/securityPass'
+import { passSecurity } from '../../function/securityPass'
 import axios from "axios";
 import alertsContext from 'context/alerts';
 
@@ -26,33 +26,30 @@ const NvaPass = () => {
   const [done, setDone] = useState(false)
   const [passSecureStr, setPassSecureStr] = useState("muy débil")
   const [passSecureColor, setPassSecureColor] = useState("danger")
-  const [call, setCall] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const { newAlert } = useContext(alertsContext)
+  const { newAlert, newActivity } = useContext(alertsContext)
 
-  useEffect(() => {
-    setCall(!call)
-    // eslint-disable-next-line
-  }, [])
-
-  const recuperarPass = async (e) => {
+  const recoveryPass = async (e) => {
     e.preventDefault()
-    const seguridad = parseInt(seguridadClave(pass1))
-    if (seguridad === 100) {
+    const security = parseInt(passSecurity(pass1))
+    if (security === 100) {
       if (pass1 === pass2) {
-        const datos = {
+        const data = {
           password: pass1
         }
-        await axios.put(UrlNodeServer.authDir.auth, datos, {
+        setLoading(true)
+        await axios.put(UrlNodeServer.authDir.auth, data, {
           headers: { 'Authorization': 'Bearer ' + localStorage.getItem('user-token') }
         })
           .then(() => {
-            setDone(true)
+            newActivity("El usuario ha cambiado la contraseña con éxito!")
             newAlert("success", "Contraseña cambiada con éxito!", "Ingrese con sus nuevas credenciales")
+            setDone(true)
           })
           .catch(() => {
             newAlert("danger", "Error desconocido!", "Intente nuevamente")
-          })
+          }).finally(() => { setLoading(false) })
       } else {
         newAlert("danger", "No coinciden las contraseñas!", "Las contraseñas deben ser iguales.")
         document.getElementById("emailInp").select()
@@ -63,16 +60,16 @@ const NvaPass = () => {
     }
   }
 
-  const nivelPass = (e) => {
+  const passLevel = (e) => {
     setPass1(e)
-    let seguridad = seguridadClave(e)
-    if (seguridad < 20) {
+    let security = passSecurity(e)
+    if (security < 20) {
       setPassSecureColor("danger")
       setPassSecureStr("muy débil")
-    } else if (seguridad < 50) {
+    } else if (security < 50) {
       setPassSecureColor("orange")
       setPassSecureStr("débil")
-    } else if (seguridad < 100) {
+    } else if (security < 100) {
       setPassSecureColor("info")
       setPassSecureStr("regular")
     } else {
@@ -98,7 +95,7 @@ const NvaPass = () => {
                 <span style={{ fontWeight: "bold" }}>Ingrese su nueva contraseña:</span>
               </div>
 
-              <Form role="form" onSubmit={e => recuperarPass(e)}>
+              <Form role="form" onSubmit={e => recoveryPass(e)}>
                 {
                   loading ?
                     <div style={{ textAlign: "center" }}>
@@ -111,7 +108,7 @@ const NvaPass = () => {
                               <i className="ni ni-lock-circle-open" />
                             </InputGroupText>
                           </InputGroupAddon>
-                          <Input placeholder="Nueva contraseña" type="password" value={pass1} onChange={e => nivelPass(e.target.value)} autoComplete="new-email" id="emailInp" required />
+                          <Input placeholder="Nueva contraseña" type="password" value={pass1} onChange={e => passLevel(e.target.value)} autoComplete="new-email" id="emailInp" required />
                         </InputGroup>
                       </FormGroup>
                       <FormGroup className="mb-3">
@@ -126,7 +123,7 @@ const NvaPass = () => {
                       </FormGroup>
                       <div className="text-muted font-italic">
                         <small>
-                          Nivel de seguridad:{"  "}
+                          Nivel de security:{"  "}
                           <span className={"font-weight-700 text-" + passSecureColor}>{passSecureStr}</span>
                         </small>
                       </div>

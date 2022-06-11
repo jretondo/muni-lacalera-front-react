@@ -8,7 +8,7 @@ const Index = () => {
 
     useEffect(() => {
         setUrlRoute(UrlNodeServer.routesDir.sub.dashboard)
-    }, [])
+    }, [setUrlRoute])
 
     return (
         <>

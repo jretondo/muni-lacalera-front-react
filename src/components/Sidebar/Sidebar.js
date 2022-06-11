@@ -114,8 +114,13 @@ class Sidebar extends React.Component {
     this.createLinks(this.props.routes)
   }
 
-  componentWillUnmount() {
-    this.createLinks(this.props.routes)
+
+
+  SalirBtn = (e) => {
+    e.preventDefault()
+    this.setState({
+      salir: true
+    })
   }
 
   render() {
@@ -131,13 +136,6 @@ class Sidebar extends React.Component {
         href: logo.outterLink,
         target: "_blank"
       };
-    }
-
-    const SalirBtn = (e) => {
-      e.preventDefault()
-      this.setState({
-        salir: true
-      })
     }
 
     return (
@@ -192,7 +190,12 @@ class Sidebar extends React.Component {
                   <span>Soporte</span>
                 </DropdownItem>
                 <DropdownItem divider />
-                <DropdownItem href="#pablo" onClick={e => SalirBtn(e)}>
+                <DropdownItem href="#pablo" onClick={e => {
+                  e.preventDefault()
+                  this.setState({
+                    salir: true
+                  })
+                }}>
                   <i className="ni ni-user-run" />
                   <span>Salir</span>
                 </DropdownItem>
