@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/nekonet-ar/ContaNET-Principal-ReactJS/issues"
   },
-  "homepage": "https://clublimptest.nekoadmin.com.ar/",
+  "homepage": "https://muni-lacalera.nekoadmin.com.ar/",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

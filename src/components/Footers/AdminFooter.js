@@ -32,11 +32,11 @@ class Footer extends React.Component {
               © {moment(new Date()).format("YYYY")}{" "}
               <a
                 className="font-weight-bold ml-1"
-                href="https://www.nekonet.com.ar"
+                href="https://www.javier-retondo.ar"
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                NekoNET
+                Javier Retondo
               </a>
             </div>
           </Col>
