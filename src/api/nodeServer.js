@@ -13,7 +13,8 @@ if (process.env.NODE_ENV === "development") {
     host = "https://api-prod.nekoadmin.com.ar/muni-lacalera/api"
     publicFiles = "https://api-prod.nekoadmin.com.ar/muni-lacalera/static"
 }
-
+host = "https://api-prod.nekoadmin.com.ar/muni-lacalera/api"
+publicFiles = "https://api-prod.nekoadmin.com.ar/muni-lacalera/static"
 const prodImages = publicFiles + "/images/products/"
 
 const publicFolder = {
