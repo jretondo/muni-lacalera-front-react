@@ -14,9 +14,10 @@ window.process = {};
 
 ReactDOM.render(
   <BrowserRouter>
-    <Switch>
-      <SecureRoutesProvider>
-        <AlertsProvider>
+
+    <SecureRoutesProvider>
+      <AlertsProvider>
+        <Switch>
           <Route path={process.env.PUBLIC_URL + "/auth"} render={props => <AuthLayout {...props} />} />
           <Route path={process.env.PUBLIC_URL + "/admin"} render={props => <AdminLayout {...props} />} />
 
@@ -25,9 +26,10 @@ ReactDOM.render(
             process.env.NODE_ENV === "development" ?
               <Redirect to={process.env.PUBLIC_URL + "/auth/login"} /> : null
           }
-        </AlertsProvider>
-      </SecureRoutesProvider>
-    </Switch>
+        </Switch>
+      </AlertsProvider>
+    </SecureRoutesProvider>
+
   </BrowserRouter>,
   document.getElementById("root")
 );
