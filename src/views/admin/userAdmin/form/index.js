@@ -24,7 +24,7 @@ const UserForm = ({
             name,
             lastname,
             email,
-            user,
+            userName: user,
             tel
         }
 
