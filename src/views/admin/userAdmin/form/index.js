@@ -2,7 +2,8 @@ import UrlNodeServer from '../../../../api/nodeServer'
 import axios from 'axios'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row, Spinner } from 'reactstrap'
-import alertsContext from 'context/alerts';
+import alertsContext from '../../../../context/alerts';
+import actionsBackend from '../../../../context/actionsBackend';
 
 const UserForm = ({
     setNewForm,
@@ -17,9 +18,9 @@ const UserForm = ({
     const [tel, setTel] = useState("")
 
     const { newAlert, newActivity } = useContext(alertsContext)
+    const { axiosPost, loadingActions } = useContext(actionsBackend)
 
     const newUser = async () => {
-        setLoading(true)
         const data = {
             name,
             lastname,
@@ -32,31 +33,22 @@ const UserForm = ({
             data.id = idDetail
         }
 
-        await axios.post(UrlNodeServer.usersDir.users, data, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        }).then(res => {
-            if (res.data.status === 201) {
-                if (detBool) {
-                    newActivity(`Se ha modificado al usuario ${name} ${lastname} usuario: ${user}`)
-                    newAlert("success", "Usuario modificado con éxito!", "")
-                    //setActividadStr("El usuario a modificado al ususario " + usuario)
-                    setNewForm(false)
-                } else {
-                    newActivity(`Se ha creado al usuario ${name} ${lastname} usuario: ${user}`)
-                    newAlert("success", "Usuario agregado con éxito!", "En breve le llegará un email con el aviso")
-                    //setActividadStr("El usuario a agregado al ususario " + usuario)
-                }
-                ResetForm()
+        const response = await axiosPost(UrlNodeServer.usersDir.users, data)
+
+        console.log('response :>> ', response);
+
+        if (!response.error) {
+            if (detBool) {
+                newActivity(`Se ha modificado al usuario ${name} ${lastname} usuario: ${user}`)
+                newAlert("success", "Usuario modificado con éxito!", "")
+                setNewForm(false)
             } else {
-                newAlert("danger", "Hubo un error!", "Revise que el nombre de usuario no esté repetido")
+                newActivity(`Se ha creado al usuario ${name} ${lastname} usuario: ${user}`)
+                newAlert("success", "Usuario agregado con éxito!", "En breve le llegará un email con el aviso")
             }
-        }).catch(() => {
+        } else {
             newAlert("danger", "Hubo un error!", "Revise que el nombre de usuario no esté repetido")
-        }).finally(() => {
-            setLoading(false)
-        })
+        }
     }
 
     const getUser = useCallback(async () => {
@@ -122,7 +114,7 @@ const UserForm = ({
             </CardHeader>
             <CardBody>
                 {
-                    loading ?
+                    loadingActions ?
                         <div style={{ textAlign: "center", marginTop: "0" }}>
                             <Spinner type="grow" color="primary" style={{ width: "100px", height: "100px" }} />
                         </div> :
