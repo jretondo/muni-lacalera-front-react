@@ -7,10 +7,11 @@ const ProvidersModule = () => {
     return (
         <>
             <Header />
-
             <Container>
 
             </Container>
         </>
     )
 }
+
+export default ProvidersModule
