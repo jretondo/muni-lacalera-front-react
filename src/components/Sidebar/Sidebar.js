@@ -75,6 +75,7 @@ class Sidebar extends React.Component {
       .then(res => {
         this.setState({
           data: (
+            // eslint-disable-next-line
             routes.map((prop, key) => {
               const id = prop.id
 
@@ -98,6 +99,24 @@ class Sidebar extends React.Component {
                     </NavLink>
                   </NavItem>
                 );
+              } if (prop.id === 1) {
+                const admin = localStorage.getItem("admin")
+                if (parseInt(admin) === 1) {
+                  return (
+                    <NavItem key={key}>
+                      <NavLink
+                        to={prop.layout + prop.path}
+                        tag={NavLinkRRD}
+                        onClick={this.closeCollapse}
+                        activeClassName="active"
+                        style={{ color: "#0081c9", fontWeight: "bold" }}
+                      >
+                        <i className={prop.icon} />
+                        {prop.name}
+                      </NavLink>
+                    </NavItem>
+                  );
+                }
               } else {
                 if (esta) {
                   return (

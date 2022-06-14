@@ -49,7 +49,8 @@ const routesDir = {
     sub: {
         dashboard: routes + "/dashboard",
         changePass: routes + "/changePass",
-        userAdmin: routes + "/userAdmin"
+        userAdmin: routes + "/userAdmin",
+        providers: routes + "/providers"
     }
 }
 
