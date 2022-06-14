@@ -1,6 +1,5 @@
 import UrlNodeServer from '../../../../api/nodeServer'
-import axios from 'axios'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Card, CardBody, CardHeader, Col, Form, FormGroup, Input, Label, Row, Spinner } from 'reactstrap'
 import alertsContext from '../../../../context/alerts';
 import actionsBackend from '../../../../context/actionsBackend';
@@ -14,11 +13,10 @@ const UserForm = ({
     const [lastname, setLastname] = useState("")
     const [user, setUser] = useState("")
     const [email, setEmail] = useState("")
-    const [loading, setLoading] = useState(false)
     const [tel, setTel] = useState("")
 
     const { newAlert, newActivity } = useContext(alertsContext)
-    const { axiosPost, loadingActions } = useContext(actionsBackend)
+    const { axiosGet, axiosPost, loadingActions } = useContext(actionsBackend)
 
     const newUser = async () => {
         const data = {
@@ -28,16 +26,13 @@ const UserForm = ({
             userName: user,
             tel
         }
-
         if (detBool) {
             data.id = idDetail
         }
-
         const response = await axiosPost(UrlNodeServer.usersDir.users, data)
 
-        console.log('response :>> ', response);
-
         if (!response.error) {
+            ResetForm()
             if (detBool) {
                 newActivity(`Se ha modificado al usuario ${name} ${lastname} usuario: ${user}`)
                 newAlert("success", "Usuario modificado con éxito!", "")
@@ -47,32 +42,22 @@ const UserForm = ({
                 newAlert("success", "Usuario agregado con éxito!", "En breve le llegará un email con el aviso")
             }
         } else {
-            newAlert("danger", "Hubo un error!", "Revise que el nombre de usuario no esté repetido")
+            newAlert("danger", "Hubo un error!", "Revise que el nombre de usuario no esté repetido. Error: " + response.errorMsg)
         }
     }
 
-    const getUser = useCallback(async () => {
-        setLoading(true)
-        await axios.get(`${UrlNodeServer.usersDir.sub.details}/${idDetail}`, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        }).then(res => {
-            if (res.data.status === 200) {
-                const userData = res.data.body[0]
-                setName(userData.name)
-                setLastname(userData.lastname)
-                setUser(userData.user)
-                setEmail(userData.email)
-                setTel(userData.tel)
-            } else {
-                newAlert("danger", "Hubo un error al querer ver el detalle", "Intente nuevamente")
-            }
-        }).catch((error) => {
-            newAlert("danger", "Hubo un error al querer ver el detalle", "error: " + error.message)
-        }).finally(() => setLoading(false))
-        // eslint-disable-next-line
-    }, [idDetail])
+    const getUser = async () => {
+        const response = await axiosGet(UrlNodeServer.usersDir.sub.details, idDetail)
+        if (!response.error) {
+            setName(response.data[0].name)
+            setLastname(response.data[0].lastname)
+            setUser(response.data[0].user)
+            setEmail(response.data[0].email)
+            setTel(response.data[0].tel)
+        } else {
+            newAlert("danger", "Hubo un error al querer ver el detalle", "error: " + response.errorMsg)
+        }
+    }
 
     const userName = () => {
         const firstNameLet = name.substring(0, 1)
@@ -92,7 +77,8 @@ const UserForm = ({
         if (detBool) {
             getUser()
         }
-    }, [detBool, getUser])
+        // eslint-disable-next-line
+    }, [detBool])
 
     return (<>
         <Card>

@@ -1,8 +1,8 @@
 import UrlNodeServer from '../../../../api/nodeServer'
-import axios from 'axios'
 import React, { useContext, useEffect, useState } from 'react'
 import { Card, CardBody, CardHeader, Col, Container, Input, Row, Spinner } from 'reactstrap'
 import alertsContext from 'context/alerts';
+import actionsBackend from 'context/actionsBackend';
 
 const UserPermissions = ({
     setNewForm,
@@ -13,40 +13,56 @@ const UserPermissions = ({
     const [newPermissions, setNewPermissions] = useState([])
     const [layoutPermissions, setLayoutPermissions] = useState(<></>)
     const [layoutUserPermissions, setLayoutUserPermissions] = useState(<></>)
-    const [loading, setLoading] = useState(false)
 
     const { newAlert, newActivity } = useContext(alertsContext)
-
-    useEffect(() => {
-        ListPermissionsUsu()
-        // eslint-disable-next-line
-    }, [])
-
-    useEffect(() => {
-        PlantPermissions()
-        // eslint-disable-next-line
-    }, [newPermissions.length, permissionsAvailable.length])
+    const { axiosGet, axiosPost, loadingActions } = useContext(actionsBackend)
 
     const ListPermissionsUsu = async () => {
-        setLoading(true)
-        await axios.get(`${UrlNodeServer.permissionsDir.permissions}/${idUser}`, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        }).then(res => {
-            setLoading(false)
-            if (res.data.status === 200) {
-                setPermissionsAvailable(res.data.body.permissions)
-                setNewPermissions(res.data.body.userPermissions)
-            } else {
-                setPermissionsAvailable([])
-                setNewPermissions([])
-            }
-        }).catch(() => {
-            setLoading(false)
+
+        const response = await axiosGet(UrlNodeServer.permissionsDir.permissions, idUser)
+
+        if (!response.error) {
+            setPermissionsAvailable(response.data.permissions)
+            setNewPermissions(response.data.userPermissions)
+        } else {
+            newAlert("danger", "Hubo un error al consultar al servidor. Error: " + response.errorMsg)
             setPermissionsAvailable([])
             setNewPermissions([])
+        }
+    }
+
+    const newPermission = async () => {
+        const permissions = await new Promise((resolve, reject) => {
+            let list = []
+            if (newPermissions.length > 0) {
+                // eslint-disable-next-line
+                newPermissions.map((item, key) => {
+                    list.push({
+                        idPermission: item.id_permission
+                    })
+                    if (key === newPermissions.length - 1) {
+                        resolve(list)
+                    }
+                })
+            } else {
+                resolve([])
+            }
         })
+
+        const data = {
+            permissions: permissions,
+            idUser: idUser
+        }
+
+        const response = await axiosPost(UrlNodeServer.permissionsDir.permissions, data)
+
+        if (!response.error) {
+            newAlert("success", "Permisos modificados con éxito!", "")
+            newActivity(`Se le han modificado los permisos de acceso al usuario ${userName} (id: ${idUser})`)
+            setNewForm(false)
+        } else {
+            newAlert("danger", "Hubo un error!", "Intente nuevamente! Error: " + response.errorMsg)
+        }
     }
 
     const DeletePermission = (key, item) => {
@@ -135,50 +151,17 @@ const UserPermissions = ({
         }
     }
 
-    const newPermission = async () => {
-        const permissions = await new Promise((resolve, reject) => {
-            setLoading(true)
-            let list = []
-            if (newPermissions.length > 0) {
-                // eslint-disable-next-line
-                newPermissions.map((item, key) => {
-                    list.push({
-                        idPermission: item.id_permission
-                    })
-                    if (key === newPermissions.length - 1) {
-                        resolve(list)
-                    }
-                })
-            } else {
-                resolve([])
-            }
-        })
+    useEffect(() => {
+        ListPermissionsUsu()
+        // eslint-disable-next-line
+    }, [])
 
-        const data = {
-            permissions: permissions,
-            idUser: idUser
-        }
+    useEffect(() => {
+        PlantPermissions()
+        // eslint-disable-next-line
+    }, [newPermissions.length, permissionsAvailable.length])
 
-        await axios.post(UrlNodeServer.permissionsDir.permissions, data, {
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-            }
-        }).then(res => {
-            if (res.data.status === 201) {
-                newAlert("success", "Permisos modificados con éxito!", "")
-                newActivity(`Se le han modificado los permisos de acceso al usuario ${userName} (id: ${idUser})`)
-            } else {
-                newAlert("danger", "Hubo un error!", "Intente nuevamente!")
-            }
-        }).catch(() => {
-            newAlert("danger", "Hubo un error!", "Intente nuevamente!")
-        }).finally(() => {
-            setLoading(false)
-            setNewForm(false)
-        })
-    }
-
-    if (loading) {
+    if (loadingActions) {
         return (
             <div style={{ textAlign: "center", marginTop: "0" }}>
                 <Spinner type="grow" color="primary" style={{ width: "100px", height: "100px" }} />

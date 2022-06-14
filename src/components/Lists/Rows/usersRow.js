@@ -1,5 +1,4 @@
-import React, { useContext, useState } from 'react'
-import axios from 'axios'
+import React, { useContext } from 'react'
 import UrlNodeServer from '../../../api/nodeServer'
 import {
     DropdownMenu,
@@ -9,6 +8,7 @@ import {
 } from "reactstrap"
 import swal from 'sweetalert'
 import alertsContext from 'context/alerts';
+import actionsBackend from 'context/actionsBackend';
 import '../shimmer.css';
 
 const UserRow = ({
@@ -24,9 +24,8 @@ const UserRow = ({
     setIdUser,
     setUserName
 }) => {
-    const [loading, setLoading] = useState(false)
-    const [backPage, setBackPage] = useState(false)
     const { newAlert, newActivity } = useContext(alertsContext)
+    const { axiosDelete, loadingActions } = useContext(actionsBackend)
 
     const deleteUser = async (e, id, name, first, page) => {
         e.preventDefault()
@@ -41,36 +40,25 @@ const UserRow = ({
             dangerMode: true,
         })
             .then(async (willDelete) => {
+                let backPage = false
                 if (willDelete) {
-                    setLoading(true)
-                    await axios.delete(`${UrlNodeServer.usersDir.users}/${id}`, {
-                        headers: {
-                            'Authorization': 'Bearer ' + localStorage.getItem('user-token')
-                        }
-                    }).then(res => {
-                        const status = parseInt(res.data.status)
-                        if (status === 200) {
-                            if (first) {
-                                if (page > 1) {
-                                    setBackPage(true)
-                                }
+                    const response = await axiosDelete(UrlNodeServer.usersDir.users, id)
+                    if (!response.error) {
+                        if (first) {
+                            if (page > 1) {
+                                backPage = true
                             }
-                            newActivity(`Se ha eliminado alusuario ${item.name} ${item.lastname} (id: ${item.user})`)
-                            newAlert("success", "Usuario eliminado con éxito!", "")
-                        } else {
-                            newAlert("danger", "Hubo un error!", "Intentelo nuevamente")
                         }
-                    }).catch(() => {
-                        newAlert("danger", "Hubo un error!", "Intentelo nuevamente")
-                    }).finally(() => {
-                        setLoading(false)
+                        newActivity(`Se ha eliminado alusuario ${item.name} ${item.lastname} (id: ${item.user})`)
+                        newAlert("success", "Usuario eliminado con éxito!", "")
                         if (backPage) {
                             setPage(parseInt(page - 1))
-                            setBackPage(false)
                         } else {
                             refreshToggle()
                         }
-                    })
+                    } else {
+                        newAlert("danger", "Hubo un error!", "Intentelo nuevamente. Error: " + response.errorMsg)
+                    }
                 }
             });
     }
@@ -89,7 +77,7 @@ const UserRow = ({
     }
 
     return (
-        <tr key={id} className={loading ? "shimmer" : ""} >
+        <tr key={id} className={loadingActions ? "shimmer" : ""} >
             <td style={{ textAlign: "center" }}>
                 {item.name + " " + item.lastname}
             </td>
