@@ -21,10 +21,26 @@ var routes = [
   {
     path: "/providers",
     name: "Monotributistas",
-    icon: "ni ni-single-02 text-blue",
+    icon: "ni ni-badge text-red",
     component: providers,
     layout: process.env.PUBLIC_URL + "/admin",
     id: 2
+  },
+  {
+    path: "/payments",
+    name: "Pagos y Adelantos",
+    icon: "ni ni-money-coins text-green",
+    component: providers,
+    layout: process.env.PUBLIC_URL + "/admin",
+    id: 3
+  },
+  {
+    path: "/reports",
+    name: "Reportes",
+    icon: "ni ni-badge text-teal",
+    component: providers,
+    layout: process.env.PUBLIC_URL + "/admin",
+    id: 4
   }
 ];
 export default routes;
