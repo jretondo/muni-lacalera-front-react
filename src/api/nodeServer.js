@@ -24,6 +24,8 @@ const routes = host + "/routes"
 const permissions = host + "/permissions"
 const users = host + "/user"
 const activity = host + "/activity"
+const providers = host + "/providers"
+const sectors = host + "/sectors"
 
 const authDir = {
     auth
@@ -58,13 +60,27 @@ const activityDir = {
     activity
 }
 
+const providersDir = {
+    providers,
+    sub: {
+        fiscal: providers + "/fiscal",
+        details: providers + "/details"
+    }
+}
+
+const sectorsDir = {
+    sectors
+}
+
 const UrlNodeServer = {
     publicFolder,
     authDir,
     routesDir,
     permissionsDir,
     usersDir,
-    activityDir
+    activityDir,
+    providersDir,
+    sectorsDir
 }
 
 export default UrlNodeServer

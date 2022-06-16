@@ -8,8 +8,6 @@ export const useAxiosGetList = (url, page, refresh, querys) => {
     const [errorList, setErrorList] = useState(null)
     const [loadingList, setLoadingList] = useState(false)
 
-
-
     useEffect(() => {
         const getList = async () => {
             setPagesObj([])

@@ -7,6 +7,7 @@ import ButtonOpenCollapse from 'components/Buttons/buttonOpenCollapse';
 import { useWindowSize } from '../../../hooks/UseWindowSize';
 import List from './components/list';
 import Params from './components/params';
+import FormInput from './components/form';
 
 const ProvidersModule = () => {
     const [moduleActive, setModuleActive] = useState(0)
@@ -44,10 +45,14 @@ const ProvidersModule = () => {
                     </CardHeader>
                     <CardBody>
                         <Collapse isOpen={moduleActive === 0 ? true : false} >
-                            <List />
+                            <List
+                                setIdMono={setIdMono}
+                            />
                         </Collapse>
                         <Collapse isOpen={moduleActive === 1 ? true : false} >
-                            <Form />
+                            <FormInput
+                                idProv={idMono}
+                            />
                         </Collapse>
                         <Collapse isOpen={moduleActive === 2 ? true : false} >
                             <Params />

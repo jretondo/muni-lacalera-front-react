@@ -7,7 +7,8 @@ const ProvidersRow = ({
     setIdDetail,
     first,
     page,
-    setPage
+    setPage,
+    refreshToggle
 }) => {
 
     const details = () => {

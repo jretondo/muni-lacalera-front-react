@@ -1,7 +1,6 @@
 export const processQuerys = async (querysArray = [{
     query: ""
 }]) => {
-
     let queryString = ""
     if (querysArray.length > 0) {
         return new Promise((resolve, reject) => {
