@@ -55,7 +55,7 @@ const NdocInput = ({
 
     return (
         <Col md={colSize}>
-            <Label for="nDoc">{parseInt(tipoDoc) === 80 ? "Nº CUIT" : "Nº Doc."}</Label>
+            <Label for="nDoc">{parseInt(tipoDoc) === 80 ? "Nº CUIT" : "Nº DNI"}</Label>
             <FormGroup>
                 <Input
                     disabled={loadingActions}

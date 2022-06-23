@@ -5,7 +5,7 @@ import { SearchFormButtonAddon } from 'components/Search/Search2';
 import { useAxiosGetList } from '../../../../../hooks/useAxiosGetList';
 import UrlNodeServer from '../../../../../api/nodeServer';
 import PaginationComp from 'components/Pagination/Pages';
-import { SectorsListOpt } from './sectorsList';
+import { SectorsListOpt } from '../sectorsList';
 
 const List = ({
     setIdMono

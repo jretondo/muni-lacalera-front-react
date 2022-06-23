@@ -1,4 +1,4 @@
-import UrlNodeServer from '../../../../../api/nodeServer';
+import UrlNodeServer from '../../../../api/nodeServer';
 import { useAxiosGetList } from 'hooks/useAxiosGetList';
 import React, { useEffect, useState } from 'react';
 
