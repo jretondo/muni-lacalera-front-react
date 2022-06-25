@@ -5,10 +5,14 @@ import { SearchFormButtonAddon } from 'components/Search/Search2';
 import { useAxiosGetList } from '../../../../../hooks/useAxiosGetList';
 import UrlNodeServer from '../../../../../api/nodeServer';
 import PaginationComp from 'components/Pagination/Pages';
-import { SectorsListOpt } from '../sectorsList';
+
+import { ProviderRow } from 'components/Lists/Rows/providerRow';
+import { SectorsListOpt } from 'components/Customs/ListsOptions/sectorsList';
 
 const List = ({
-    setIdMono
+    setIdProv,
+    setModuleActive,
+    moduleActive
 }) => {
     const [page, setPage] = useState(1)
     const [refreshList, setRefreshList] = useState(false)
@@ -40,22 +44,28 @@ const List = ({
                     if (key > 0) {
                         first = false
                     }
-                    return (<providersRows
+                    return (<ProviderRow
+                        key={key}
                         id={key}
                         item={item}
-                        setIdDetail={setIdMono}
+                        setIdProv={setIdProv}
                         first={first}
                         page={page}
                         setPage={setPage}
                         refreshToggle={() => setRefreshList(!refreshList)}
+                        setModuleActive={setModuleActive}
                     />)
                 })
             )
         } else {
             setProvidersRows(<tr><td>No hay monotributistas con los filtros colocados</td></tr>)
         }
-    }, [dataPage, errorList, page, refreshList, setIdMono])
+    }, [dataPage, errorList, page, refreshList, setIdProv, setModuleActive])
 
+    useEffect(() => {
+        setRefreshList(!refreshList)
+        // eslint-disable-next-line 
+    }, [moduleActive, sectorId, isHealthProf, isProf])
 
     return (
         <>
@@ -78,7 +88,10 @@ const List = ({
                                 <Label>Sector</Label>
                                 <Input value={sectorId} onChange={e => setSectorId(e.target.value)} type="select">
                                     <option value={""}>Todos los sectores</option>
-                                    <SectorsListOpt />
+                                    <SectorsListOpt
+                                        refresh={moduleActive}
+                                        setSectorId={setSectorId}
+                                    />
                                 </Input>
                             </FormGroup>
                         </Col>

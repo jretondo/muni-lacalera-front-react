@@ -1,43 +1,43 @@
-import UrlNodeServer from '../../../../../../../api/nodeServer';
+import UrlNodeServer from '../../../api/nodeServer';
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from 'reactstrap';
-import { useAxiosGetList } from '../../../../../../../hooks/useAxiosGetList';
+import { useAxiosGetList } from '../../../hooks/useAxiosGetList';
 import { TableList } from 'components/Lists/TableList';
 import { SearchFormComponent } from 'components/Search/Search1';
 import PaginationComp from 'components/Pagination/Pages';
-import { SectorRow } from 'components/Lists/Rows/sectorRow';
+import { AmountRow } from 'components/Lists/Rows/amountRow';
 
-const ListSectors = ({
-    setIdSector,
+const ListFixAmount = ({
+    setIdAmount,
     setOpenForm
 }) => {
     const [page, setPage] = useState(1)
     const [refreshList, setRefreshList] = useState(false)
     const [textSearch, setTextSearch] = useState("")
-    const [sectorRows, setSectorRows] = useState(<></>)
+    const [amountsRows, setAmountsRows] = useState(<></>)
 
     const {
         pageObj,
         dataPage,
         errorList,
         loadingList } =
-        useAxiosGetList(UrlNodeServer.sectorsDir.sectors,
-            page, refreshList, [{ query: textSearch }, { cantPerPage: 5 }])
+        useAxiosGetList(UrlNodeServer.amountsDir.amounts,
+            page, refreshList, [{ query: textSearch }, { cantPerPage: 5 }, { type: 1 }])
 
     useEffect(() => {
         if (dataPage.length > 0) {
-            setSectorRows(
+            setAmountsRows(
                 dataPage.map((item, key) => {
                     let first = true
                     if (key > 0) {
                         first = false
                     }
                     return (
-                        <SectorRow
+                        <AmountRow
                             key={key}
                             id={key}
                             item={item}
-                            setIdSector={setIdSector}
+                            setIdAmount={setIdAmount}
                             refreshToggle={() => setRefreshList(!refreshList)}
                             first={first}
                             page={page}
@@ -47,9 +47,9 @@ const ListSectors = ({
                 })
             )
         } else {
-            setSectorRows(<tr><td>No hay sectores listados</td></tr>)
+            setAmountsRows(<tr><td>No hay montos listados</td></tr>)
         }
-    }, [dataPage, errorList, refreshList, setRefreshList, page, setIdSector])
+    }, [dataPage, errorList, refreshList, setRefreshList, page, setIdAmount])
 
     if (loadingList) {
         return (<Row><Col md="12" style={{ textAlign: "center" }}><Spinner style={{ width: "200px", height: "200px" }} color="warning" /></Col></Row>)
@@ -63,16 +63,16 @@ const ListSectors = ({
                             stringSearched={textSearch}
                             setRefreshList={setRefreshList}
                             refreshList={refreshList}
-                            title="Buscar Sector"
+                            title="Buscar Monto"
                         />
                     </Col>
                 </Row>
                 <Row>
                     <Col md="12">
                         <TableList
-                            titlesArray={["Sector", "Descripción", ""]}
+                            titlesArray={["Nombre", "Monto", "Descripción", ""]}
                         >
-                            {sectorRows}
+                            {amountsRows}
                         </TableList>
                     </Col>
                 </Row>
@@ -82,7 +82,7 @@ const ListSectors = ({
                             e.preventDefault()
                             setOpenForm(true)
                         }}>
-                            Nuevo Sector
+                            Nuevo Monto
                         </Button>
                     </Col>
                     <Col md="6" style={{ textAlign: "right" }}>
@@ -98,4 +98,4 @@ const ListSectors = ({
     }
 }
 
-export default ListSectors
+export default ListFixAmount

@@ -1,11 +1,12 @@
-import UrlNodeServer from '../../../../api/nodeServer';
+import UrlNodeServer from '../../../api/nodeServer';
 import { useAxiosGetList } from 'hooks/useAxiosGetList';
 import React, { useEffect, useState } from 'react';
 
 export const SectorsListOpt = ({
-    refresh
+    refresh,
+    setSectorId
 }) => {
-    const [listSectors, setSectors] = useState(<></>)
+    const [listSectors, setListSectors] = useState(<></>)
     const {
         loadingList,
         dataPage,
@@ -16,15 +17,18 @@ export const SectorsListOpt = ({
 
     useEffect(() => {
         if (!errorList && dataPage.length > 0) {
-            setSectors(
+            setListSectors(
                 dataPage.map((item, key) => {
+                    if (key === 0) {
+                        setSectorId(item.id)
+                    }
                     return (<option key={key} value={item.id}>{item.sector}</option>)
                 })
             )
         } else {
-            setSectors(<></>)
+            setListSectors(<></>)
         }
-    }, [errorList, dataPage])
+    }, [errorList, dataPage, setSectorId])
 
     return (
         loadingList ? null : listSectors

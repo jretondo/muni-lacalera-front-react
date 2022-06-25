@@ -5,28 +5,28 @@ import alertsContext from 'context/alerts';
 import actionsBackend from 'context/actionsBackend';
 import '../shimmer.css';
 import UrlNodeServer from '../../../api/nodeServer';
-import { numberFormat } from 'function/numberFormat';
 
-export const AmountRow = ({
+export const ProviderRow = ({
     id,
     item,
-    refreshToggle,
-    setIdAmount,
+    setIdProv,
     first,
     page,
-    setPage
+    setPage,
+    refreshToggle,
+    setModuleActive
 }) => {
     const { newAlert, newActivity } = useContext(alertsContext)
     const { axiosDelete, loadingActions } = useContext(actionsBackend)
 
-    const details = (idAmount) => {
-        setIdAmount(idAmount)
+    const details = (idProv) => {
+        setIdProv(idProv)
+        setModuleActive(1)
     }
-
-    const remove = (name, idAmount) => {
+    const deleteProvider = (idProv, name, cuit) => {
         swal({
-            title: "Eliminar el monto " + name + "!",
-            text: "¿Está seguro de eliminar a este monto? Esta desición es permanente.",
+            title: "Eliminar el monotributista " + name + "!",
+            text: "¿Está seguro de eliminar a este monotributista? Esta desición es permanente.",
             icon: "warning",
             buttons: {
                 cancel: "No",
@@ -37,15 +37,15 @@ export const AmountRow = ({
             .then(async (willDelete) => {
                 let backPage = false
                 if (willDelete) {
-                    const response = await axiosDelete(UrlNodeServer.amountsDir.amounts, idAmount)
+                    const response = await axiosDelete(UrlNodeServer.providersDir.providers, idProv)
                     if (!response.error) {
                         if (first) {
                             if (page > 1) {
                                 backPage = true
                             }
                         }
-                        newActivity(`Se ha eliminado el monto ${name} (id: ${idAmount})`)
-                        newAlert("success", "Monto eliminado con éxito!", "")
+                        newActivity(`Se ha eliminado el monotributista ${name} (CUIT: ${cuit}) (id: ${idProv})`)
+                        newAlert("success", "Monotributista eliminado con éxito!", "")
                         if (backPage) {
                             setPage(parseInt(page - 1))
                         } else {
@@ -60,14 +60,17 @@ export const AmountRow = ({
 
     return (
         <tr key={id} className={loadingActions ? "shimmer" : ""}>
-            <td style={{ textAlign: "center", fontSize: "14px", fontWeight: "bold" }}>
-                {item.amount_name}
+            <td style={{ textAlign: "center" }}>
+                {item.name}
             </td>
             <td style={{ textAlign: "center" }}>
-                $ {numberFormat(item.amount)}
+                {item.cuit}
             </td>
             <td style={{ textAlign: "center" }}>
-                {item.description}
+                {item.sector}
+            </td>
+            <td style={{ textAlign: "center" }}>
+                {item.direction}
             </td>
             <td className="text-right">
                 <UncontrolledDropdown>
@@ -80,23 +83,25 @@ export const AmountRow = ({
                         onClick={e => e.preventDefault()}
                     >
                         <i className="fas fa-ellipsis-v" />
-                    </DropdownToggle>
+                    </DropdownToggle    >
                     <DropdownMenu className="dropdown-menu-arrow" right>
                         <DropdownItem
                             href="#pablo"
                             onClick={e => {
                                 e.preventDefault()
-                                details(item.id)
+                                details(item.id_provider)
                             }}>
                             <i className="fas fa-edit"></i>
                             Editar
                         </DropdownItem>
+
                         <DropdownItem
                             href="#pablo"
                             onClick={e => {
                                 e.preventDefault()
-                                remove(item.name, item.id)
-                            }}>
+                                deleteProvider(item.id_provider, item.name)
+                            }}
+                        >
                             <i className="fas fa-trash-alt"></i>
                             Eliminar
                         </DropdownItem>

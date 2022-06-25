@@ -1,43 +1,43 @@
-import UrlNodeServer from '../../../../../../../api/nodeServer';
+import UrlNodeServer from '../../../api/nodeServer';
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from 'reactstrap';
-import { useAxiosGetList } from '../../../../../../../hooks/useAxiosGetList';
+import { useAxiosGetList } from '../../../hooks/useAxiosGetList';
 import { TableList } from 'components/Lists/TableList';
 import { SearchFormComponent } from 'components/Search/Search1';
 import PaginationComp from 'components/Pagination/Pages';
-import { AmountRow } from 'components/Lists/Rows/amountRow';
+import { SectorRow } from 'components/Lists/Rows/sectorRow';
 
-const ListFixAmount = ({
-    setIdAmount,
+const ListSectors = ({
+    setIdSector,
     setOpenForm
 }) => {
     const [page, setPage] = useState(1)
     const [refreshList, setRefreshList] = useState(false)
     const [textSearch, setTextSearch] = useState("")
-    const [amountsRows, setAmountsRows] = useState(<></>)
+    const [sectorRows, setSectorRows] = useState(<></>)
 
     const {
         pageObj,
         dataPage,
         errorList,
         loadingList } =
-        useAxiosGetList(UrlNodeServer.amountsDir.amounts,
+        useAxiosGetList(UrlNodeServer.sectorsDir.sectors,
             page, refreshList, [{ query: textSearch }, { cantPerPage: 5 }])
 
     useEffect(() => {
         if (dataPage.length > 0) {
-            setAmountsRows(
+            setSectorRows(
                 dataPage.map((item, key) => {
                     let first = true
                     if (key > 0) {
                         first = false
                     }
                     return (
-                        <AmountRow
+                        <SectorRow
                             key={key}
                             id={key}
                             item={item}
-                            setIdAmount={setIdAmount}
+                            setIdSector={setIdSector}
                             refreshToggle={() => setRefreshList(!refreshList)}
                             first={first}
                             page={page}
@@ -47,9 +47,9 @@ const ListFixAmount = ({
                 })
             )
         } else {
-            setAmountsRows(<tr><td>No hay montos listados</td></tr>)
+            setSectorRows(<tr><td>No hay sectores listados</td></tr>)
         }
-    }, [dataPage, errorList, refreshList, setRefreshList, page, setIdAmount])
+    }, [dataPage, errorList, refreshList, setRefreshList, page, setIdSector])
 
     if (loadingList) {
         return (<Row><Col md="12" style={{ textAlign: "center" }}><Spinner style={{ width: "200px", height: "200px" }} color="warning" /></Col></Row>)
@@ -63,16 +63,16 @@ const ListFixAmount = ({
                             stringSearched={textSearch}
                             setRefreshList={setRefreshList}
                             refreshList={refreshList}
-                            title="Buscar Monto"
+                            title="Buscar Sector"
                         />
                     </Col>
                 </Row>
                 <Row>
                     <Col md="12">
                         <TableList
-                            titlesArray={["Nombre", "Monto", "Descripción", ""]}
+                            titlesArray={["Sector", "Descripción", ""]}
                         >
-                            {amountsRows}
+                            {sectorRows}
                         </TableList>
                     </Col>
                 </Row>
@@ -82,7 +82,7 @@ const ListFixAmount = ({
                             e.preventDefault()
                             setOpenForm(true)
                         }}>
-                            Nuevo Monto
+                            Nuevo Sector
                         </Button>
                     </Col>
                     <Col md="6" style={{ textAlign: "right" }}>
@@ -98,4 +98,4 @@ const ListFixAmount = ({
     }
 }
 
-export default ListFixAmount
+export default ListSectors

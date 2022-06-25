@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Button, Col, Form, FormGroup, Input, Label, Row, Spinner } from 'reactstrap';
 import actionsBackend from 'context/actionsBackend';
 import alertsContext from 'context/alerts';
-import UrlNodeServer from '../../../../../../../api/nodeServer';
+import UrlNodeServer from '../../../api/nodeServer';
 
 const FormSector = ({
     setIdSector,

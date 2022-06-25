@@ -1,6 +1,6 @@
 import Header from 'components/Headers/Header';
 import React, { useContext, useEffect, useState } from 'react';
-import { ButtonGroup, Card, CardBody, CardHeader, Collapse, Container, Form } from 'reactstrap';
+import { ButtonGroup, Card, CardBody, CardHeader, Collapse, Container } from 'reactstrap';
 import secureContext from 'context/secureRoutes';
 import UrlNodeServer from '../../../api/nodeServer';
 import ButtonOpenCollapse from 'components/Buttons/buttonOpenCollapse';
@@ -11,7 +11,7 @@ import FormInput from './components/form';
 
 const ProvidersModule = () => {
     const [moduleActive, setModuleActive] = useState(0)
-    const [idMono, setIdMono] = useState(false)
+    const [idProv, setIdProv] = useState(false)
     const { setUrlRoute } = useContext(secureContext)
     const width = useWindowSize()
 
@@ -32,13 +32,16 @@ const ProvidersModule = () => {
                                 active={moduleActive === 0 ? true : false}
                             />
                             <ButtonOpenCollapse
-                                action={() => setModuleActive(1)}
-                                tittle={idMono ? "Modificar Datos" : "Nuevo Monotributista"}
+                                action={() => {
+                                    setIdProv(false)
+                                    setModuleActive(1)
+                                }}
+                                tittle={idProv ? "Modificar Datos" : "Nuevo Monotributista"}
                                 active={moduleActive === 1 ? true : false}
                             />
                             <ButtonOpenCollapse
                                 action={() => setModuleActive(2)}
-                                tittle={"Consulta de Ventas"}
+                                tittle={"Parametros"}
                                 active={moduleActive === 2 ? true : false}
                             />
                         </ButtonGroup>
@@ -46,12 +49,16 @@ const ProvidersModule = () => {
                     <CardBody>
                         <Collapse isOpen={moduleActive === 0 ? true : false} >
                             <List
-                                setIdMono={setIdMono}
+                                setIdProv={setIdProv}
+                                setModuleActive={setModuleActive}
+                                moduleActive={moduleActive}
                             />
                         </Collapse>
                         <Collapse isOpen={moduleActive === 1 ? true : false} >
                             <FormInput
-                                idProv={idMono}
+                                idProv={idProv}
+                                setIdProv={setIdProv}
+                                setModuleActive={setModuleActive}
                             />
                         </Collapse>
                         <Collapse isOpen={moduleActive === 2 ? true : false} >

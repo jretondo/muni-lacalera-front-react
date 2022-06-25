@@ -1,6 +1,9 @@
 import index from "views/admin/dashboard"
 import userAdmin from 'views/admin/userAdmin'
-import providers from 'views/admin/providers';
+import providers from 'views/admin/providers'
+import payments from 'views/admin/payments';
+import reports from 'views/admin/reports';
+
 var routes = [
   {
     path: "/index",
@@ -30,7 +33,7 @@ var routes = [
     path: "/payments",
     name: "Pagos y Adelantos",
     icon: "ni ni-money-coins text-green",
-    component: providers,
+    component: payments,
     layout: process.env.PUBLIC_URL + "/admin",
     id: 3
   },
@@ -38,7 +41,7 @@ var routes = [
     path: "/reports",
     name: "Reportes",
     icon: "ni ni-badge text-teal",
-    component: providers,
+    component: reports,
     layout: process.env.PUBLIC_URL + "/admin",
     id: 4
   }
