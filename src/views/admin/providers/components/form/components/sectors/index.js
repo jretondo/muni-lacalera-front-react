@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import FormSector from './form';
 import ListSectors from './list';
@@ -8,6 +8,12 @@ const SectorsModal = ({
     toggle
 }) => {
     const [openForm, setOpenForm] = useState(false)
+    const [idSector, setIdSector] = useState(false)
+
+    useEffect(() => {
+        setOpenForm(false)
+        setIdSector(false)
+    }, [modal])
 
     return (
         <Modal size="lg" isOpen={modal} toggle={toggle}>
@@ -16,8 +22,16 @@ const SectorsModal = ({
             </ModalHeader>
             <ModalBody>
                 {
-                    openForm ?
-                        <FormSector /> : <ListSectors />
+                    openForm || idSector ?
+                        <FormSector
+                            idSector={idSector}
+                            setIdSector={setIdSector}
+                            setOpenForm={setOpenForm}
+                        /> :
+                        <ListSectors
+                            setIdSector={setIdSector}
+                            setOpenForm={setOpenForm}
+                        />
                 }
             </ModalBody>
             <ModalFooter>

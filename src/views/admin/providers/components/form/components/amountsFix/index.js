@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import FormFixAmount from './form';
+import ListFixAmount from './list';
 
-const AmountsFixModal = ({
+const SectorsModal = ({
     modal,
     toggle
 }) => {
+    const [openForm, setOpenForm] = useState(false)
+    const [idAmount, setIdAmount] = useState(false)
 
+    useEffect(() => {
+        setOpenForm(false)
+        setIdAmount(false)
+    }, [modal])
 
     return (
         <Modal size="lg" isOpen={modal} toggle={toggle}>
@@ -13,13 +21,24 @@ const AmountsFixModal = ({
                 Listado de montos fijos
             </ModalHeader>
             <ModalBody>
-
+                {
+                    openForm || idAmount ?
+                        <FormFixAmount
+                            idAmount={idAmount}
+                            setIdAmount={setIdAmount}
+                            setOpenForm={setOpenForm}
+                        /> :
+                        <ListFixAmount
+                            setIdAmount={setIdAmount}
+                            setOpenForm={setOpenForm}
+                        />
+                }
             </ModalBody>
             <ModalFooter>
                 <Button color="danger" onClick={e => {
                     e.preventDefault()
                     toggle()
-                }} >
+                }}>
                     Cerrar
                 </Button>
             </ModalFooter>
@@ -27,4 +46,4 @@ const AmountsFixModal = ({
     )
 }
 
-export default AmountsFixModal
+export default SectorsModal

@@ -163,7 +163,9 @@ const FormInput = ({
                                 ><i className='fa fa-plus'></i></Button>
                             </Label>
                             <Input type="select" value={sectorId} onChange={e => setSectorId(e.target.value)} >
-                                <SectorsListOpt />
+                                <SectorsListOpt
+                                    refresh={modalSectors}
+                                />
                             </Input>
                         </FormGroup>
                     </Col>

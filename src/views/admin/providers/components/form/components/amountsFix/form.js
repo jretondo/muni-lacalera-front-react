@@ -4,57 +4,61 @@ import actionsBackend from 'context/actionsBackend';
 import alertsContext from 'context/alerts';
 import UrlNodeServer from '../../../../../../../api/nodeServer';
 
-const FormSector = ({
-    setIdSector,
-    idSector,
+const FormFixAmount = ({
+    setIdAmount,
+    idAmount,
     setOpenForm
 }) => {
-    const [sectorName, setSectorName] = useState("")
-    const [sectorDescr, setSectorDescr] = useState("")
+    const [name, setName] = useState("")
+    const [amount, setAmount] = useState("")
+    const [description, setDescription] = useState("")
     const { loadingActions, axiosPost, axiosGet } = useContext(actionsBackend)
     const { newAlert, newActivity } = useContext(alertsContext)
 
-    const sectorPost = async () => {
+    const amountPost = async () => {
         const data = {
-            sector: sectorName,
-            description: sectorDescr
+            name: name,
+            amount: amount,
+            description: description,
+            per_hour: 0
         }
-        if (idSector) {
-            data.id = idSector
+        if (idAmount) {
+            data.id = idAmount
         }
-        const response = await axiosPost(UrlNodeServer.sectorsDir.sectors, data)
+        const response = await axiosPost(UrlNodeServer.amountsDir.amounts, data)
         if (!response.error) {
-            if (idSector) {
-                newAlert("success", "Sector modificado con éxito!", "")
-                newActivity(`El ususario ha modificado el sector: ${sectorName}`)
+            if (idAmount) {
+                newAlert("success", "Monto modificado con éxito!", "")
+                newActivity(`El ususario ha modificado el monto: ${name}`)
             } else {
-                newAlert("success", "Sector cargado con éxito!", "")
-                newActivity(`El ususario ha cargado el sector: ${sectorName}`)
+                newAlert("success", "Monto cargado con éxito!", "")
+                newActivity(`El ususario ha cargado el monto: ${name}`)
             }
-            setIdSector(false)
+            setIdAmount(false)
             setOpenForm(false)
         } else {
             newAlert("danger", `Hubo un error`, `Error: ${response.errorMsg}`)
         }
     }
 
-    const sectorGet = async () => {
-        const response = await axiosGet(UrlNodeServer.sectorsDir.sub.details, idSector)
+    const amountGet = async () => {
+        const response = await axiosGet(UrlNodeServer.amountsDir.sub.details, idAmount)
         if (!response.error) {
-            setSectorName(response.data[0].sector)
-            setSectorDescr(response.data[0].description)
+            setName(response.data[0].name)
+            setDescription(response.data[0].description)
+            setAmount(response.data[0].amount)
         } else {
             newAlert("danger", `Hubo un error`, `Error: ${response.errorMsg}`)
-            setIdSector(false)
+            setIdAmount(false)
         }
     }
 
     useEffect(() => {
-        if (idSector) {
-            sectorGet()
+        if (idAmount) {
+            amountGet()
         }
         // eslint-disable-next-line 
-    }, [idSector])
+    }, [idAmount])
 
     if (loadingActions) {
         return (<Row><Col md="12" style={{ textAlign: "center" }}><Spinner style={{ width: "200px", height: "200px" }} color="warning" /></Col></Row>)
@@ -62,14 +66,20 @@ const FormSector = ({
         return (
             <Form onSubmit={e => {
                 e.preventDefault()
-                sectorPost()
+                amountPost()
             }}>
-                <h2>{idSector ? "Modificar Sector" : "Nuevo Sector"}</h2>
+                <h2>{idAmount ? "Modificar Monto" : "Nuevo Monto"}</h2>
                 <Row>
-                    <Col md="12">
+                    <Col md="8">
                         <FormGroup>
-                            <Label>Nombre del sector</Label>
-                            <Input type="text" value={sectorName} onChange={e => setSectorName(e.target.value)} />
+                            <Label>Nombre del monto</Label>
+                            <Input required type="text" value={name} onChange={e => setName(e.target.value)} />
+                        </FormGroup>
+                    </Col>
+                    <Col>
+                        <FormGroup>
+                            <Label>Monto</Label>
+                            <Input required type="number" step="0.01" min="0.01" value={amount} onChange={e => setAmount(e.target.value)} />
                         </FormGroup>
                     </Col>
                 </Row>
@@ -77,19 +87,19 @@ const FormSector = ({
                     <Col md="12">
                         <FormGroup>
                             <Label>Descripción</Label>
-                            <Input type="textarea" value={sectorDescr} onChange={e => setSectorDescr(e.target.value)} />
+                            <Input type="textarea" value={description} onChange={e => setDescription(e.target.value)} />
                         </FormGroup>
                     </Col>
                 </Row>
                 <Row>
                     <Col md="12" style={{ textAlign: "center" }}>
                         <Button color="primary"  >
-                            {idSector ? "Modificar Sector" : "Agregar Sector"}
+                            {idAmount ? "Modificar Monto" : "Agregar Monto"}
                         </Button>
                         <Button color="danger" onClick={e => {
                             e.preventDefault()
                             setOpenForm(false)
-                            setIdSector(false)
+                            setIdAmount(false)
                         }}>
                             Cancelar
                         </Button>
@@ -100,4 +110,4 @@ const FormSector = ({
     }
 }
 
-export default FormSector
+export default FormFixAmount

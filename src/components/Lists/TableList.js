@@ -6,7 +6,7 @@ import {
 export const TableList = ({ titlesArray, children }) => {
 
     return (
-        <Table className="align-items-center table-flush" responsive>
+        <Table className="align-items-center table-flush table-hover" responsive>
             <thead className="thead-light">
                 <tr>
                     {
