@@ -17,7 +17,7 @@ const FormFixAmount = ({
 
     const amountPost = async () => {
         const data = {
-            name: name,
+            amount_name: name,
             amount: amount,
             description: description,
             per_hour: 1
@@ -44,7 +44,7 @@ const FormFixAmount = ({
     const amountGet = async () => {
         const response = await axiosGet(UrlNodeServer.amountsDir.sub.details, idAmount)
         if (!response.error) {
-            setName(response.data[0].name)
+            setName(response.data[0].amount_name)
             setDescription(response.data[0].description)
             setAmount(response.data[0].amount)
         } else {

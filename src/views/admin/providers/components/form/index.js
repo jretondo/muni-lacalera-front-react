@@ -33,6 +33,8 @@ const FormInput = ({
     const [invalidDNI, setInvalidDNI] = useState(false)
     const [invalidCUIT, setInvalidCUIT] = useState(false)
     const [dataFiscal, setDataFisca] = useState([])
+    const [fromMonth, setFromMonth] = useState(1)
+    const [toMonth, setToMonth] = useState(1)
 
     const [modalAmountFix, setModalAmountFix] = useState(false)
     const [modalAmountPerH, setModalAmountPerH] = useState(false)
@@ -73,7 +75,9 @@ const FormInput = ({
             category: category,
             activity: activity,
             email: email,
-            phone: phone
+            phone: phone,
+            from_month: fromMonth,
+            to_month: toMonth
         }
         if (idProv) {
             data.id_provider = idProv
@@ -111,6 +115,8 @@ const FormInput = ({
             setActivity(response.data[0].activity)
             setEmail(response.data[0].email)
             setPhone(response.data[0].phone)
+            setFromMonth(response.data[0].from_month)
+            setToMonth(response.data[0].to_month)
         } else {
             newAlert("danger", `Hubo un error`, `Error: ${response.errorMsg}`)
         }
@@ -259,7 +265,7 @@ const FormInput = ({
                     </Col>
                 </Row>
                 <Row>
-                    <Col md="6">
+                    <Col md={parseInt(isHealthProf) === 1 ? 3 : 4}>
                         <FormGroup>
                             <Label>Sectores
                                 <Button
@@ -286,7 +292,7 @@ const FormInput = ({
                     </Col>
                     {parseInt(isHealthProf) === 1 ?
                         <>
-                            <Col md="4">
+                            <Col md="3">
                                 <FormGroup>
                                     <Label>Monto por hora ($/hs)
                                         <Button
@@ -319,7 +325,7 @@ const FormInput = ({
                                 </FormGroup>
                             </Col>
                         </> : <>
-                            <Col>
+                            <Col md="4">
                                 <FormGroup>
                                     <Label>Monto fijo ($)
                                         <Button
@@ -346,6 +352,44 @@ const FormInput = ({
                                 </FormGroup>
                             </Col>
                         </>}
+                    <Col md="2">
+                        <FormGroup style={{ marginTop: "10px" }}>
+                            <Label>Mes desde</Label>
+                            <Input value={fromMonth} onChange={e => setFromMonth(e.target.value)} type="select">
+                                <option value={1}>Enero</option>
+                                <option value={2}>Febrero</option>
+                                <option value={3}>Marzo</option>
+                                <option value={4}>Abril</option>
+                                <option value={5}>Mayo</option>
+                                <option value={6}>Junio</option>
+                                <option value={7}>Julio</option>
+                                <option value={8}>Agosto</option>
+                                <option value={9}>Septiembre</option>
+                                <option value={10}>Octubre</option>
+                                <option value={11}>Noviembre</option>
+                                <option value={12}>Diciembre</option>
+                            </Input>
+                        </FormGroup>
+                    </Col>
+                    <Col md="2">
+                        <FormGroup style={{ marginTop: "10px" }}>
+                            <Label>Mes desde</Label>
+                            <Input value={toMonth} onChange={e => setToMonth(e.target.value)} type="select">
+                                <option value={1}>Enero</option>
+                                <option value={2}>Febrero</option>
+                                <option value={3}>Marzo</option>
+                                <option value={4}>Abril</option>
+                                <option value={5}>Mayo</option>
+                                <option value={6}>Junio</option>
+                                <option value={7}>Julio</option>
+                                <option value={8}>Agosto</option>
+                                <option value={9}>Septiembre</option>
+                                <option value={10}>Octubre</option>
+                                <option value={11}>Noviembre</option>
+                                <option value={12}>Diciembre</option>
+                            </Input>
+                        </FormGroup>
+                    </Col>
                 </Row>
                 <Row style={{ marginTop: "20px" }}>
                     <Col md="12" style={{ textAlign: "center" }}>
