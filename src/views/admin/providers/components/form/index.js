@@ -320,7 +320,7 @@ const FormInput = ({
                             </Col>
                             <Col md="2">
                                 <FormGroup style={{ marginTop: "10px" }}>
-                                    <Label>Hs por mes</Label>
+                                    <Label>Hs por período</Label>
                                     <Input type="number" value={hours} onChange={e => setHours(e.target.value)} />
                                 </FormGroup>
                             </Col>
