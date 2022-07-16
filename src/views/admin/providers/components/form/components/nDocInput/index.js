@@ -1,6 +1,6 @@
 import UrlNodeServer from '../../../../../../../api/nodeServer'
 import React, { useContext, useEffect } from 'react'
-import { Col, FormFeedback, FormGroup, Input, Label, Spinner } from 'reactstrap'
+import { Col, FormFeedback, FormGroup, Input, Label } from 'reactstrap'
 import { verifyCuit } from 'function/verifyCuit'
 import actionsBackend from 'context/actionsBackend';
 import './shimmer.css';

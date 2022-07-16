@@ -33,7 +33,9 @@ const List = ({
             [{ query: textSearch },
             { sectorId: sectorId },
             { isProf: isProf },
-            { isHealthProf: isHealthProf }])
+            { isHealthProf: isHealthProf },
+            { advanceSearch: advanceSearch }
+            ])
 
 
     useEffect(() => {
@@ -65,7 +67,7 @@ const List = ({
     useEffect(() => {
         setRefreshList(!refreshList)
         // eslint-disable-next-line 
-    }, [moduleActive, sectorId, isHealthProf, isProf])
+    }, [moduleActive, sectorId, isHealthProf, isProf, advanceSearch])
 
     return (
         <>
