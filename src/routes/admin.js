@@ -1,8 +1,9 @@
 import index from "views/admin/dashboard"
 import userAdmin from 'views/admin/userAdmin'
 import providers from 'views/admin/providers'
-import payments from 'views/admin/payments';
+import works from 'views/admin/works';
 import reports from 'views/admin/reports';
+import payments from 'views/admin/payments';
 
 var routes = [
   {
@@ -28,6 +29,14 @@ var routes = [
     component: providers,
     layout: process.env.PUBLIC_URL + "/admin",
     id: 2
+  },
+  {
+    path: "/works",
+    name: "Registro de trabajos",
+    icon: "ni ni-book-bookmark text-yellow",
+    component: works,
+    layout: process.env.PUBLIC_URL + "/admin",
+    id: 5
   },
   {
     path: "/payments",

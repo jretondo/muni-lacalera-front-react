@@ -55,7 +55,8 @@ const routesDir = {
         changePass: routes + "/changePass",
         userAdmin: routes + "/userAdmin",
         providers: routes + "/providers",
-        payments: routes + "/payments"
+        payments: routes + "/payments",
+        works: routes + "/works"
     }
 }
 
