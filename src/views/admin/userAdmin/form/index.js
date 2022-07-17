@@ -173,7 +173,7 @@ const UserForm = ({
                                             placeholder="Telefóno..."
                                             value={tel}
                                             onChange={e => setTel(e.target.value)}
-                                            required />
+                                        />
                                     </FormGroup>
                                 </Col>
                             </Row>

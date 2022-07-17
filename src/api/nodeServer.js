@@ -27,6 +27,7 @@ const activity = host + "/activity"
 const providers = host + "/providers"
 const sectors = host + "/sectors"
 const amounts = host + "/amounts"
+const payments = host + "/payments"
 
 const authDir = {
     auth
@@ -53,7 +54,8 @@ const routesDir = {
         dashboard: routes + "/dashboard",
         changePass: routes + "/changePass",
         userAdmin: routes + "/userAdmin",
-        providers: routes + "/providers"
+        providers: routes + "/providers",
+        payments: routes + "/payments"
     }
 }
 
@@ -83,6 +85,13 @@ const amountsDir = {
     }
 }
 
+const paymentsDir = {
+    payments,
+    sub: {
+        details: payments + "/details"
+    }
+}
+
 const UrlNodeServer = {
     publicFolder,
     authDir,
@@ -92,7 +101,8 @@ const UrlNodeServer = {
     activityDir,
     providersDir,
     sectorsDir,
-    amountsDir
+    amountsDir,
+    paymentsDir
 }
 
 export default UrlNodeServer
