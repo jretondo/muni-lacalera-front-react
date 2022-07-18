@@ -77,6 +77,11 @@ const ModalProviders = ({
                                     onChange={e => {
                                         setTextSearch(e.target.value)
                                     }}
+                                    onKeyDown={e => {
+                                        if (e.keyCode === 13) {
+                                            setRefreshList(!refreshList)
+                                        }
+                                    }}
                                 />
                                 <InputGroupAddon addonType="append">
                                     <Button

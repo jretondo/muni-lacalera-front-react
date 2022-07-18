@@ -26,6 +26,12 @@ const FormPayment = () => {
         setModalProvider(false)
     }, [providerId])
 
+    useEffect(() => {
+        if (isProfHelth) {
+            setTotal(cantHours * priceHour)
+        }
+    }, [cantHours, isProfHelth, priceHour])
+
     return (<>
         <Form onSubmit={e => {
             e.preventDefault()
