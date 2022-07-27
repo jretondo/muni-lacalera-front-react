@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from 'reactstrap';
 import swal from 'sweetalert';
 import alertsContext from 'context/alerts';
 import actionsBackend from 'context/actionsBackend';
 import '../shimmer.css';
 import UrlNodeServer from '../../../api/nodeServer';
+import ModalNewContract from 'components/Modals/ModalNewContract';
 
 export const ProviderRow = ({
     id,
@@ -16,6 +17,7 @@ export const ProviderRow = ({
     refreshToggle,
     setModuleActive
 }) => {
+    const [modalContracts, setModalContracts] = useState(false)
     const { newAlert, newActivity } = useContext(alertsContext)
     const { axiosDelete, loadingActions } = useContext(actionsBackend)
 
@@ -59,55 +61,92 @@ export const ProviderRow = ({
     }
 
     return (
-        <tr key={id} className={loadingActions ? "shimmer" : ""}>
-            <td style={{ textAlign: "center" }}>
-                {item.name}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.cuit}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.sector}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                {item.direction}
-            </td>
-            <td className="text-right">
-                <UncontrolledDropdown>
-                    <DropdownToggle
-                        className="btn-icon-only text-light"
-                        href="#pablo"
-                        role="button"
-                        size="sm"
-                        color=""
-                        onClick={e => e.preventDefault()}
-                    >
-                        <i className="fas fa-ellipsis-v" />
-                    </DropdownToggle    >
-                    <DropdownMenu className="dropdown-menu-arrow" right>
-                        <DropdownItem
+        <>
+            <tr key={id} className={loadingActions ? "shimmer" : ""}>
+                <td style={{ textAlign: "center" }}>
+                    {item.name}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                    {item.cuit}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                    {item.sector}
+                </td>
+                <td style={{ textAlign: "center" }}>
+                    {item.direction}
+                </td>
+                <td className="text-right">
+                    <UncontrolledDropdown>
+                        <DropdownToggle
+                            className="btn-icon-only text-light"
                             href="#pablo"
-                            onClick={e => {
-                                e.preventDefault()
-                                details(item.id_provider)
-                            }}>
-                            <i className="fas fa-edit"></i>
-                            Editar
-                        </DropdownItem>
-
-                        <DropdownItem
-                            href="#pablo"
-                            onClick={e => {
-                                e.preventDefault()
-                                deleteProvider(item.id_provider, item.name)
-                            }}
+                            role="button"
+                            size="sm"
+                            color=""
+                            onClick={e => e.preventDefault()}
                         >
-                            <i className="fas fa-trash-alt"></i>
-                            Eliminar
-                        </DropdownItem>
-                    </DropdownMenu>
-                </UncontrolledDropdown>
-            </td>
-        </tr>
+                            <i className="fas fa-ellipsis-v" />
+                        </DropdownToggle    >
+                        <DropdownMenu className="dropdown-menu-arrow" right>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => {
+                                    e.preventDefault()
+                                    setModalContracts(true)
+                                }}
+                            >
+                                <i className="fas fa-file-contract"></i>
+                                Nuevo Contrato
+                            </DropdownItem>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => {
+                                    e.preventDefault()
+
+                                }}
+                            >
+                                <i className="fas fa-book"></i>
+                                Nuevo Trabajo
+                            </DropdownItem>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => {
+                                    e.preventDefault()
+
+                                }}
+                            >
+                                <i className="fas fa-coins"></i>
+                                Nuevo Pago
+                            </DropdownItem>
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => {
+                                    e.preventDefault()
+                                    details(item.id_provider)
+                                }}>
+                                <i className="fas fa-edit"></i>
+                                Editar
+                            </DropdownItem>
+
+                            <DropdownItem
+                                href="#pablo"
+                                onClick={e => {
+                                    e.preventDefault()
+                                    deleteProvider(item.id_provider, item.name)
+                                }}
+                            >
+                                <i className="fas fa-trash-alt"></i>
+                                Eliminar
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </UncontrolledDropdown>
+                </td>
+            </tr>
+            <ModalNewContract
+                idProv={item.id_provider}
+                modal={modalContracts}
+                toggle={() => setModalContracts(!modalContracts)}
+            />
+        </>
     )
 }

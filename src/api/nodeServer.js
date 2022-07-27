@@ -28,6 +28,7 @@ const providers = host + "/providers"
 const sectors = host + "/sectors"
 const amounts = host + "/amounts"
 const payments = host + "/payments"
+const contracts = host + "/contracts"
 
 const authDir = {
     auth
@@ -93,6 +94,13 @@ const paymentsDir = {
     }
 }
 
+const contractsDir = {
+    contracts,
+    sub: {
+        details: contracts + "/details"
+    }
+}
+
 const UrlNodeServer = {
     publicFolder,
     authDir,
@@ -103,7 +111,8 @@ const UrlNodeServer = {
     providersDir,
     sectorsDir,
     amountsDir,
-    paymentsDir
+    paymentsDir,
+    contractsDir
 }
 
 export default UrlNodeServer

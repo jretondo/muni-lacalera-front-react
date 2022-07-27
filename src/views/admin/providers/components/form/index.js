@@ -34,8 +34,9 @@ const FormInput = ({
     const [invalidCUIT, setInvalidCUIT] = useState(false)
     const [dataFiscal, setDataFisca] = useState([])
     const [fromMonth, setFromMonth] = useState(1)
-    const [toMonth, setToMonth] = useState(1)
-
+    const [toMonth, setToMonth] = useState(6)
+    const [fromYear, setFromYear] = useState(new Date().getFullYear())
+    const [toYear, setToYear] = useState(new Date().getFullYear())
     const [modalAmountFix, setModalAmountFix] = useState(false)
     const [modalAmountPerH, setModalAmountPerH] = useState(false)
     const [modalSectors, setModalSectors] = useState(false)
@@ -77,7 +78,9 @@ const FormInput = ({
             email: email,
             phone: phone,
             from_month: fromMonth,
-            to_month: toMonth
+            to_month: toMonth,
+            from_year: fromYear,
+            to_year: toYear
         }
         if (idProv) {
             data.id_provider = idProv
@@ -264,37 +267,15 @@ const FormInput = ({
                         </FormGroup>
                     </Col>
                 </Row>
-                <Row>
-                    <Col md={parseInt(isHealthProf) === 1 ? 3 : 4}>
-                        <FormGroup>
-                            <Label>Sectores
-                                <Button
-                                    color="warning"
-                                    style={{
-                                        borderRadius: "50%",
-                                        padding: "6px",
-                                        paddingInline: "10px",
-                                        marginLeft: "10px"
-                                    }}
-                                    onClick={e => {
-                                        e.preventDefault()
-                                        setModalSectors(true)
-                                    }}
-                                ><i className='fa fa-plus'></i></Button>
-                            </Label>
-                            <Input type="select" value={sectorId} onChange={e => setSectorId(e.target.value)} >
-                                <SectorsListOpt
-                                    refresh={modalSectors}
-                                    setSectorId={setSectorId}
-                                />
-                            </Input>
-                        </FormGroup>
+                <Row style={{ textAlign: "center" }}>
+                    <Col md="1">
                     </Col>
-                    {parseInt(isHealthProf) === 1 ?
-                        <>
-                            <Col md="3">
+                    <Col md="4" style={{ border: "2px solid red", borderRadius: "15px" }}>
+                        <h3>Sector y cobro</h3>
+                        <Row>
+                            <Col md={12}>
                                 <FormGroup>
-                                    <Label>Monto por hora ($/hs)
+                                    <Label>Sectores
                                         <Button
                                             color="warning"
                                             style={{
@@ -305,92 +286,151 @@ const FormInput = ({
                                             }}
                                             onClick={e => {
                                                 e.preventDefault()
-                                                setModalAmountPerH(true)
+                                                setModalSectors(true)
                                             }}
                                         ><i className='fa fa-plus'></i></Button>
                                     </Label>
-                                    <Input type="select" value={amountId} onChange={e => setAmountId(e.target.value)} >
-                                        <AmountsFixListOpt
-                                            refresh={modalAmountPerH || isHealthProf}
-                                            type={1}
-                                            setAmountId={setAmountId}
+                                    <Input type="select" value={sectorId} onChange={e => setSectorId(e.target.value)} >
+                                        <SectorsListOpt
+                                            refresh={modalSectors}
+                                            setSectorId={setSectorId}
                                         />
                                     </Input>
                                 </FormGroup>
                             </Col>
-                            <Col md="2">
+                        </Row>
+                        <Row>
+                            {parseInt(isHealthProf) === 1 ?
+                                <>
+                                    <Col md="8">
+                                        <FormGroup>
+                                            <Label>Monto por hora ($/hs)
+                                                <Button
+                                                    color="warning"
+                                                    style={{
+                                                        borderRadius: "50%",
+                                                        padding: "6px",
+                                                        paddingInline: "10px",
+                                                        marginLeft: "10px"
+                                                    }}
+                                                    onClick={e => {
+                                                        e.preventDefault()
+                                                        setModalAmountPerH(true)
+                                                    }}
+                                                ><i className='fa fa-plus'></i></Button>
+                                            </Label>
+                                            <Input type="select" value={amountId} onChange={e => setAmountId(e.target.value)} >
+                                                <AmountsFixListOpt
+                                                    refresh={modalAmountPerH || isHealthProf}
+                                                    type={1}
+                                                    setAmountId={setAmountId}
+                                                />
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md="4">
+                                        <FormGroup style={{ marginTop: "10px" }}>
+                                            <Label>Hs por período</Label>
+                                            <Input type="number" value={hours} onChange={e => setHours(e.target.value)} />
+                                        </FormGroup>
+                                    </Col>
+                                </> : <>
+                                    <Col md="12">
+                                        <FormGroup>
+                                            <Label>Monto fijo ($)
+                                                <Button
+                                                    color="warning"
+                                                    style={{
+                                                        borderRadius: "50%",
+                                                        padding: "6px",
+                                                        paddingInline: "10px",
+                                                        marginLeft: "10px"
+                                                    }}
+                                                    onClick={e => {
+                                                        e.preventDefault()
+                                                        setModalAmountFix(true)
+                                                    }}
+                                                ><i className='fa fa-plus'></i></Button>
+                                            </Label>
+                                            <Input type="select" value={amountId} onChange={e => setAmountId(e.target.value)}>
+                                                <AmountsFixListOpt
+                                                    refresh={modalAmountFix || isHealthProf}
+                                                    type={0}
+                                                    setAmountId={setAmountId}
+                                                />
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>
+                                </>}
+                        </Row>
+                    </Col>
+                    <Col md="2">
+                    </Col>
+                    <Col md="4" style={{ border: "2px solid red", borderRadius: "15px" }}>
+                        <h3>Primer Contrato</h3>
+                        <Row>
+                            <Col md="6">
                                 <FormGroup style={{ marginTop: "10px" }}>
-                                    <Label>Hs por período</Label>
-                                    <Input type="number" value={hours} onChange={e => setHours(e.target.value)} />
-                                </FormGroup>
-                            </Col>
-                        </> : <>
-                            <Col md="4">
-                                <FormGroup>
-                                    <Label>Monto fijo ($)
-                                        <Button
-                                            color="warning"
-                                            style={{
-                                                borderRadius: "50%",
-                                                padding: "6px",
-                                                paddingInline: "10px",
-                                                marginLeft: "10px"
-                                            }}
-                                            onClick={e => {
-                                                e.preventDefault()
-                                                setModalAmountFix(true)
-                                            }}
-                                        ><i className='fa fa-plus'></i></Button>
-                                    </Label>
-                                    <Input type="select" value={amountId} onChange={e => setAmountId(e.target.value)}>
-                                        <AmountsFixListOpt
-                                            refresh={modalAmountFix || isHealthProf}
-                                            type={0}
-                                            setAmountId={setAmountId}
-                                        />
+                                    <Label>Mes desde</Label>
+                                    <Input value={fromMonth} onChange={e => setFromMonth(e.target.value)} type="select">
+                                        <option value={1}>Enero</option>
+                                        <option value={2}>Febrero</option>
+                                        <option value={3}>Marzo</option>
+                                        <option value={4}>Abril</option>
+                                        <option value={5}>Mayo</option>
+                                        <option value={6}>Junio</option>
+                                        <option value={7}>Julio</option>
+                                        <option value={8}>Agosto</option>
+                                        <option value={9}>Septiembre</option>
+                                        <option value={10}>Octubre</option>
+                                        <option value={11}>Noviembre</option>
+                                        <option value={12}>Diciembre</option>
                                     </Input>
                                 </FormGroup>
                             </Col>
-                        </>}
-                    <Col md="2">
-                        <FormGroup style={{ marginTop: "10px" }}>
-                            <Label>Mes desde</Label>
-                            <Input value={fromMonth} onChange={e => setFromMonth(e.target.value)} type="select">
-                                <option value={1}>Enero</option>
-                                <option value={2}>Febrero</option>
-                                <option value={3}>Marzo</option>
-                                <option value={4}>Abril</option>
-                                <option value={5}>Mayo</option>
-                                <option value={6}>Junio</option>
-                                <option value={7}>Julio</option>
-                                <option value={8}>Agosto</option>
-                                <option value={9}>Septiembre</option>
-                                <option value={10}>Octubre</option>
-                                <option value={11}>Noviembre</option>
-                                <option value={12}>Diciembre</option>
-                            </Input>
-                        </FormGroup>
+                            <Col md="6">
+                                <FormGroup style={{ marginTop: "10px" }}>
+                                    <Label>
+                                        Año desde
+                                    </Label>
+                                    <Input value={fromYear} onChange={e => setFromYear(e.target.value)} type="number" />
+                                </FormGroup>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md="6">
+                                <FormGroup style={{ marginTop: "10px" }}>
+                                    <Label>Mes desde</Label>
+                                    <Input value={toMonth} onChange={e => setToMonth(e.target.value)} type="select">
+                                        <option value={1}>Enero</option>
+                                        <option value={2}>Febrero</option>
+                                        <option value={3}>Marzo</option>
+                                        <option value={4}>Abril</option>
+                                        <option value={5}>Mayo</option>
+                                        <option value={6}>Junio</option>
+                                        <option value={7}>Julio</option>
+                                        <option value={8}>Agosto</option>
+                                        <option value={9}>Septiembre</option>
+                                        <option value={10}>Octubre</option>
+                                        <option value={11}>Noviembre</option>
+                                        <option value={12}>Diciembre</option>
+                                    </Input>
+                                </FormGroup>
+                            </Col>
+                            <Col md="6">
+                                <FormGroup style={{ marginTop: "10px" }}>
+                                    <Label>
+                                        Año hasta
+                                    </Label>
+                                    <Input value={toYear} onChange={e => setToYear(e.target.value)} type="number" />
+                                </FormGroup>
+                            </Col>
+                        </Row>
                     </Col>
-                    <Col md="2">
-                        <FormGroup style={{ marginTop: "10px" }}>
-                            <Label>Mes desde</Label>
-                            <Input value={toMonth} onChange={e => setToMonth(e.target.value)} type="select">
-                                <option value={1}>Enero</option>
-                                <option value={2}>Febrero</option>
-                                <option value={3}>Marzo</option>
-                                <option value={4}>Abril</option>
-                                <option value={5}>Mayo</option>
-                                <option value={6}>Junio</option>
-                                <option value={7}>Julio</option>
-                                <option value={8}>Agosto</option>
-                                <option value={9}>Septiembre</option>
-                                <option value={10}>Octubre</option>
-                                <option value={11}>Noviembre</option>
-                                <option value={12}>Diciembre</option>
-                            </Input>
-                        </FormGroup>
+                    <Col md="1">
                     </Col>
                 </Row>
+
                 <Row style={{ marginTop: "20px" }}>
                     <Col md="12" style={{ textAlign: "center" }}>
                         <Button disabled={!sectorId || !amountId} color="primary" type="submit">

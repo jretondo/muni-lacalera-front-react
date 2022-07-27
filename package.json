@@ -51,6 +51,7 @@
     "file-saver": "^2.0.5",
     "is-mobile": "^3.0.0",
     "moment": "^2.29.3",
+    "moment-with-locales-es6": "^1.0.1",
     "quagga": "^0.12.1",
     "react": "16.12.0",
     "react-chartjs-2": "2.9.0",
