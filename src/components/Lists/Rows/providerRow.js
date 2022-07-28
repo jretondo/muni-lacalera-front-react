@@ -25,6 +25,7 @@ export const ProviderRow = ({
         setIdProv(idProv)
         setModuleActive(1)
     }
+
     const deleteProvider = (idProv, name, cuit) => {
         swal({
             title: "Eliminar el monotributista " + name + "!",

@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'reactstrap';
 import { useAxiosGetList } from 'hooks/useAxiosGetList';
 import PaginationComp from 'components/Pagination/Pages';
-import ContractsProvRow from 'components/Lists/Rows/ContractsProvRow';
+import ContractsProvRow from 'components/Lists/Rows/contractsProvRow';
 
 const ListContractsProv = ({
-    idProv
+    idProv,
+    refreshList,
+    setRefreshList
 }) => {
     const [page, setPage] = useState(1)
     const [listContracts, setListContracts] = useState(<></>)
@@ -18,29 +20,38 @@ const ListContractsProv = ({
         errorList
     } = useAxiosGetList(
         UrlNodeServer.contractsDir.contracts,
-        page, false,
+        page, refreshList,
         [{ idProv: idProv }])
 
     useEffect(() => {
         if (!errorList && dataPage.length > 0) {
+            let first = true
             setListContracts(
                 dataPage.map((item, key) => {
+                    if (key > 0) {
+                        first = false
+                    }
                     return (<ContractsProvRow
                         key={key}
                         id={key}
                         item={item}
+                        first={first}
+                        page={page}
+                        setPage={setPage}
+                        refreshToggle={() => setRefreshList(!refreshList)}
+                        idProv
                     />)
                 })
             )
         }
-    }, [dataPage, loadingList, errorList])
+    }, [dataPage, loadingList, errorList, page, setPage, refreshList, setRefreshList])
 
     return (
         <>
             <Row>
                 <Col md="12">
                     <TableList
-                        titlesArray={["Desde", "Hasta", "Observación"]}
+                        titlesArray={["Desde", "Hasta", "Observación", ""]}
                     >
                         {listContracts}
                     </TableList>
