@@ -6,7 +6,7 @@ import { SectorsListOpt } from 'components/Customs/ListsOptions/sectorsList';
 import { TableList } from 'components/Lists/TableList';
 import PaginationComp from 'components/Pagination/Pages';
 import { SearchFormButtonAddon } from 'components/Search/Search2';
-import WorksRow2 from 'components/Lists/Rows/worksRow2';
+import PaymentsRows2 from 'components/Lists/Rows/paymentsRows2';
 
 const ListPayments = ({
     setIdPayment,
@@ -17,7 +17,7 @@ const ListPayments = ({
     const currentMonth = (new Date().getMonth() + 1)
     const [page, setPage] = useState(1)
     const [refreshList, setRefreshList] = useState(false)
-    const [worksRows, setWorksRows] = useState(<tr><td>No hay trabajos con los filtros colocados</td></tr>)
+    const [paymentsRows, setPaymentsRows] = useState(<tr><td>No hay pagos con los filtros colocados</td></tr>)
     const [textSearch, setTextSearch] = useState("")
     const [sectorId, setSectorId] = useState("")
     const [month, setMonth] = useState(currentMonth)
@@ -29,7 +29,7 @@ const ListPayments = ({
         pageObj,
         errorList }
         = useAxiosGetList(
-            UrlNodeServer.worksDir.works,
+            UrlNodeServer.paymentsDir.payments,
             page, refreshList,
             [{ query: textSearch },
             { sectorId: sectorId },
@@ -41,12 +41,12 @@ const ListPayments = ({
     useEffect(() => {
         if (!errorList && dataPage.length > 0) {
             let first = true
-            setWorksRows(
+            setPaymentsRows(
                 dataPage.map((item, key) => {
                     if (key > 0) {
                         first = false
                     }
-                    return (<WorksRow2
+                    return (<PaymentsRows2
                         key={key}
                         id={key}
                         item={item}
@@ -60,7 +60,7 @@ const ListPayments = ({
                 })
             )
         } else {
-            setWorksRows(<tr><td>No hay trabajos con los filtros colocados</td></tr>)
+            setPaymentsRows(<tr><td>No hay pagos con los filtros colocados</td></tr>)
         }
     }, [dataPage, errorList, page, refreshList, setIdPayment, setModuleActive])
 
@@ -74,7 +74,7 @@ const ListPayments = ({
         <Row style={{ marginBottom: "15px" }}>
             <Col md="4" style={{ textAlign: "left" }}>
                 <SearchFormButtonAddon
-                    title={"Buscar registro de trabajo"}
+                    title={"Buscar registro de pagos"}
                     setStringSearched={setTextSearch}
                     stringSearched={textSearch}
                     fnButton={() => setAdvanceSearch(!advanceSearch)}
@@ -92,6 +92,7 @@ const ListPayments = ({
                                 <SectorsListOpt
                                     refresh={moduleActive}
                                     setSectorId={setSectorId}
+                                    allFirst={true}
                                 />
                             </Input>
                         </FormGroup>
@@ -131,8 +132,8 @@ const ListPayments = ({
                         <Spinner color="danger" style={{ width: "170px", height: "170px", margin: "auto" }} />
                     </Col>
                     :
-                    <TableList titlesArray={["Fecha Reg.", "Monotributista", "Período", "Hs", "Monto", "Extra", ""]}  >
-                        {worksRows}
+                    <TableList titlesArray={["Fecha Reg.", "Monotributista", "Período", "Monto", ""]}  >
+                        {paymentsRows}
                     </TableList>}
             </Col>
         </Row>

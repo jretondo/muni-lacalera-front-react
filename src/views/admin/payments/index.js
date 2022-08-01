@@ -1,18 +1,72 @@
-import UrlNodeServer from 'api/nodeServer';
-import React, { useContext, useEffect } from 'react';
-import secureContext from 'context/secureRoutes';
 import Header from 'components/Headers/Header';
+import React, { useContext, useEffect, useState } from 'react';
+import secureContext from 'context/secureRoutes';
+import UrlNodeServer from "../../../api/nodeServer";
+import { ButtonGroup, Card, CardBody, CardHeader, Collapse, Container } from 'reactstrap';
+import ButtonOpenCollapse from 'components/Buttons/buttonOpenCollapse';
+import { useWindowSize } from '../../../hooks/UseWindowSize';
+import ListPayments from './components/list';
+import FormPayment from './components/form';
+import SummaryPayments from './components/summary';
 
-const Payments = () => {
+const PaymentsReg = () => {
     const { setUrlRoute } = useContext(secureContext)
+    const [moduleActive, setModuleActive] = useState(0)
+    const [idPayment, setIdPayment] = useState(false)
+    const width = useWindowSize()
 
     useEffect(() => {
-        setUrlRoute(UrlNodeServer.routesDir.sub.providers)
+        setUrlRoute(UrlNodeServer.routesDir.sub.payments)
     }, [setUrlRoute])
 
     return (<>
         <Header />
+        <Container className="mt--7" fluid>
+            <Card>
+                <CardHeader style={{ textAlign: "center" }}>
+                    <ButtonGroup vertical={width > 1030 ? false : true}>
+                        <ButtonOpenCollapse
+                            action={() => setModuleActive(0)}
+                            tittle={"Lista de pagos"}
+                            active={moduleActive === 0 ? true : false}
+                        />
+                        <ButtonOpenCollapse
+                            action={() => {
+                                setIdPayment(false)
+                                setModuleActive(1)
+                            }}
+                            tittle={idPayment ? "Modificar pago" : "Nuevo pago"}
+                            active={moduleActive === 1 ? true : false}
+                        />
+                        <ButtonOpenCollapse
+                            action={() => setModuleActive(2)}
+                            tittle={"Resumenes"}
+                            active={moduleActive === 2 ? true : false}
+                        />
+                    </ButtonGroup>
+                </CardHeader>
+                <CardBody>
+                    <Collapse isOpen={moduleActive === 0 ? true : false} >
+                        <ListPayments
+                            setIdPayment={setIdPayment}
+                            setModuleActive={setModuleActive}
+                            moduleActive={moduleActive}
+                        />
+                    </Collapse>
+                    <Collapse isOpen={moduleActive === 1 ? true : false} >
+                        <FormPayment
+                            idPayment={idPayment}
+                            setModuleActive={setModuleActive}
+                            setIdPayment={setIdPayment}
+                        />
+                    </Collapse>
+                    <Collapse isOpen={moduleActive === 2 ? true : false} >
+                        <SummaryPayments />
+                    </Collapse>
+                </CardBody>
+            </Card>
+        </Container>
     </>)
 }
 
-export default Payments
+export default PaymentsReg

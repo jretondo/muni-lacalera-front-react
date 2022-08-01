@@ -6,6 +6,7 @@ import actionsBackend from 'context/actionsBackend';
 import '../shimmer.css';
 import UrlNodeServer from '../../../api/nodeServer';
 import ModalNewContract from 'components/Modals/ModalNewContract';
+import ModalNewWork from 'components/Modals/ModalNewWork';
 
 export const ProviderRow = ({
     id,
@@ -18,6 +19,7 @@ export const ProviderRow = ({
     setModuleActive
 }) => {
     const [modalContracts, setModalContracts] = useState(false)
+    const [modalWorks, setModalWorks] = useState(false)
     const { newAlert, newActivity } = useContext(alertsContext)
     const { axiosDelete, loadingActions } = useContext(actionsBackend)
 
@@ -97,17 +99,17 @@ export const ProviderRow = ({
                                 }}
                             >
                                 <i className="fas fa-file-contract"></i>
-                                Nuevo Contrato
+                                Contratos
                             </DropdownItem>
                             <DropdownItem
                                 href="#pablo"
                                 onClick={e => {
                                     e.preventDefault()
-
+                                    setModalWorks(true)
                                 }}
                             >
                                 <i className="fas fa-book"></i>
-                                Nuevo Trabajo
+                                Trabajos
                             </DropdownItem>
                             <DropdownItem
                                 href="#pablo"
@@ -117,7 +119,7 @@ export const ProviderRow = ({
                                 }}
                             >
                                 <i className="fas fa-coins"></i>
-                                Nuevo Pago
+                                Pagos
                             </DropdownItem>
                             <DropdownItem
                                 href="#pablo"
@@ -147,6 +149,11 @@ export const ProviderRow = ({
                 idProv={item.id_provider}
                 modal={modalContracts}
                 toggle={() => setModalContracts(!modalContracts)}
+            />
+            <ModalNewWork
+                provItem={item}
+                modal={modalWorks}
+                toggle={() => setModalWorks(!modalWorks)}
             />
         </>
     )

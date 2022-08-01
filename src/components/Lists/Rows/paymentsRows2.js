@@ -2,28 +2,28 @@ import UrlNodeServer from '../../../api/nodeServer';
 import ActionsBackend from 'context/actionsBackend';
 import AlertsContext from 'context/alerts';
 import { capitalizeFirstLetter } from 'function/capitalizeFisrtWord';
+import { numberFormat } from 'function/numberFormat';
 import moment from 'moment-with-locales-es6';
 import React, { useContext } from 'react';
-import swal from 'sweetalert';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from 'reactstrap';
+import swal from 'sweetalert';
 
-const ContractsProvRow = ({
+const PaymentsRows2 = ({
     id,
     item,
-    first,
     page,
     setPage,
     refreshToggle,
-    idProv
+    first,
 }) => {
+    const period = moment(`${item.year}-${item.month}-01`, "YYYY-MM-DD").toDate()
     const { newAlert, newActivity } = useContext(AlertsContext)
     const { axiosDelete, loadingActions } = useContext(ActionsBackend)
 
-    const removeContract = async () => {
-
+    const removeWork = async () => {
         swal({
-            title: `Eliminar el contrato desde ${capitalizeFirstLetter(moment(item.from_contract).locale("es").format("MMMM"))}/${moment(item.from_contract).format("YYYY")} hasta ${capitalizeFirstLetter(moment(item.to_contract).locale("es").format("MMMM"))}/${moment(item.to_contract).format("YYYY")}!`,
-            text: "¿Está seguro de eliminar este contrato? Esta desición es permanente.",
+            title: `Eliminar el trabajo de período ${capitalizeFirstLetter(moment(period).locale("es").format("MMMM"))}/${moment(period).format("YYYY")} con monto de $ ${numberFormat(item.amount)}!`,
+            text: "¿Está seguro de eliminar este trabajo? Esta desición es permanente.",
             icon: "warning",
             buttons: {
                 cancel: "No",
@@ -34,15 +34,15 @@ const ContractsProvRow = ({
             .then(async (willDelete) => {
                 let backPage = false
                 if (willDelete) {
-                    const response = await axiosDelete(UrlNodeServer.contractsDir.contracts, item.id_contract)
+                    const response = await axiosDelete(UrlNodeServer.worksDir.works, item.id_work)
                     if (!response.error) {
                         if (first) {
                             if (page > 1) {
                                 backPage = true
                             }
                         }
-                        newActivity(`Se ha eliminado el contrato desde ${capitalizeFirstLetter(moment(item.from_contract).locale("es").format("MMMM"))}/${moment(item.from_contract).format("YYYY")} hasta ${capitalizeFirstLetter(moment(item.to_contract).locale("es").format("MMMM"))}/${moment(item.to_contract).format("YYYY")} (idProv: ${idProv})`)
-                        newAlert("success", "Contrato eliminado con éxito!", "")
+                        newActivity(`Se ha eliminado el trabajo de periodo ${capitalizeFirstLetter(moment(item.from_contract).locale("es").format("MMMM"))}/${moment(item.from_contract).format("YYYY")} (idProv: ${item.id_provider})`)
+                        newAlert("success", "Trabajo eliminado con éxito!", "")
                         if (backPage) {
                             setPage(parseInt(page - 1))
                         } else {
@@ -58,14 +58,16 @@ const ContractsProvRow = ({
     return (
         <tr key={id} className={loadingActions ? "shimmer" : ""}>
             <td style={{ textAlign: "center" }}>
-
-                {`${capitalizeFirstLetter(moment(item.from_contract).locale("es").format("MMMM"))}/${moment(item.from_contract).format("YYYY")}`}
+                {moment(item.date).format("DD/MM/YYYY")}
             </td>
             <td style={{ textAlign: "center" }}>
-                {`${capitalizeFirstLetter(moment(item.to_contract).locale("es").format("MMMM"))}/${moment(item.to_contract).format("YYYY")}`}
+                {`${item.name} (CUIT: ${item.cuit})`}
             </td>
             <td style={{ textAlign: "center" }}>
-                {item.detail}
+                {`${capitalizeFirstLetter(moment(period).locale("es").format("MMMM"))}/${moment(period).format("YYYY")}`}
+            </td>
+            <td style={{ textAlign: "center" }}>
+                $ {numberFormat(item.amount)}
             </td>
             <td className="text-right">
                 <UncontrolledDropdown>
@@ -84,7 +86,7 @@ const ContractsProvRow = ({
                             href="#pablo"
                             onClick={e => {
                                 e.preventDefault()
-                                removeContract()
+                                removeWork()
                             }}
                         >
                             <i className="fas fa-trash-alt"></i>
@@ -97,4 +99,4 @@ const ContractsProvRow = ({
     )
 }
 
-export default ContractsProvRow
+export default PaymentsRows2

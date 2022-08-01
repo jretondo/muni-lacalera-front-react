@@ -7,7 +7,7 @@ import ButtonOpenCollapse from 'components/Buttons/buttonOpenCollapse';
 import { useWindowSize } from '../../../hooks/UseWindowSize';
 import ListPayments from './components/list';
 import FormPayment from './components/form';
-import SumaryPayments from './components/sumary';
+import SummaryPayments from './components/summary';
 
 const PaymentsReg = () => {
     const { setUrlRoute } = useContext(secureContext)
@@ -61,7 +61,7 @@ const PaymentsReg = () => {
                         />
                     </Collapse>
                     <Collapse isOpen={moduleActive === 2 ? true : false} >
-                        <SumaryPayments />
+                        <SummaryPayments />
                     </Collapse>
                 </CardBody>
             </Card>

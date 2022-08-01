@@ -1,4 +1,4 @@
-import UrlNodeServer from 'api/nodeServer';
+import UrlNodeServer from '../../../../../api/nodeServer';
 import ActionsBackend from 'context/actionsBackend';
 import AlertsContext from 'context/alerts';
 import React, { useContext, useEffect, useState } from 'react';
@@ -13,11 +13,10 @@ const FormPayment = () => {
     const [providerName, setProviderName] = useState("")
     const [month, setMonth] = useState(currentMonth)
     const [year, setYear] = useState(currentYear)
-    const [cantHours, setCantHours] = useState(0)
-    const [priceHour, setPriceHour] = useState(0)
+    const [advance, setAdvance] = useState("")
+    const [type, setType] = useState("")
     const [total, setTotal] = useState(0)
     const [details, setDetails] = useState("")
-    const [isProfHelth, setIsProfHealth] = useState(false)
     const [modalProvider, setModalProvider] = useState(false)
     const [loading, setLoading] = useState(false)
     const { newAlert, newActivity } = useContext(AlertsContext)
@@ -29,18 +28,18 @@ const FormPayment = () => {
             id_provider: providerId,
             month: month,
             year: year,
-            hours: parseFloat(cantHours),
             amount: total,
             details: details,
-            isHealthProf: isProfHelth
+            type: type,
+            advance: advance
         }
 
-        const response = await axiosPost(UrlNodeServer.worksDir.works, data)
+        const response = await axiosPost(UrlNodeServer.paymentsDir.payments, data)
 
         if (!response.error) {
             setDetails("")
-            newActivity(`El usuario ha creado un nuevo trabajo del proveedor de ID: ${providerId})`)
-            newAlert("success", "Trabajo agregado con éxito!", "")
+            newActivity(`El usuario ha registrado un nuevo ${advance === "" ? "adelanto" : "pago"} al proveedor de ID: ${providerId})`)
+            newAlert("success", "Pago registrado con éxito!", "")
         } else {
             newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)
         }
@@ -50,12 +49,6 @@ const FormPayment = () => {
     useEffect(() => {
         setModalProvider(false)
     }, [providerId])
-
-    useEffect(() => {
-        if (isProfHelth) {
-            setTotal(cantHours * priceHour)
-        }
-    }, [cantHours, isProfHelth, priceHour])
 
     if (loading) {
         return (
@@ -72,7 +65,7 @@ const FormPayment = () => {
                 registerWork()
             }}>
                 <Row>
-                    <Col md="6">
+                    <Col md="8">
                         <FormGroup>
                             <Label>
                                 Monotributista
@@ -95,6 +88,14 @@ const FormPayment = () => {
                             </InputGroup>
                         </FormGroup>
                     </Col>
+                    <Col md="4">
+                        <Label>
+                            Tipo de Liquidación
+                        </Label>
+                        <Input type="text" value={type} onChange={e => setType(e.target.value)} />
+                    </Col>
+                </Row>
+                <Row>
                     <Col md="4">
                         <FormGroup>
                             <Label>
@@ -124,47 +125,24 @@ const FormPayment = () => {
                             <Input type="number" min={2010} value={year} onChange={e => setYear(e.target.value)} />
                         </FormGroup>
                     </Col>
+                    <Col md="3">
+                        <FormGroup>
+                            <Label>
+                                Total
+                            </Label>
+                            <Input type="number" value={total} onChange={e => setTotal(e.target.value)} />
+                        </FormGroup>
+                    </Col>
+                    <Col md="3">
+                        <Label>
+                            Tipo de Pago
+                        </Label>
+                        <Input type="select" value={advance} onChange={e => advance(e.target.value)}>
+                            <option value={""}>Registro de pago</option>
+                            <option value={"1"}>Adelanto de sueldo</option>
+                        </Input>
+                    </Col>
                 </Row>
-                {
-                    !providerId ? null :
-                        isProfHelth ?
-                            <Row>
-                                <Col md="4">
-                                    <FormGroup>
-                                        <Label>
-                                            Cant. de Hs.
-                                        </Label>
-                                        <Input type="number" min={1} step={1} value={cantHours} onChange={e => setCantHours(e.target.value)} />
-                                    </FormGroup>
-                                </Col>
-                                <Col md="4">
-                                    <FormGroup>
-                                        <Label>
-                                            $ / Hs
-                                        </Label>
-                                        <Input value={priceHour} disabled />
-                                    </FormGroup>
-                                </Col>
-                                <Col md="4">
-                                    <FormGroup>
-                                        <Label>
-                                            Total
-                                        </Label>
-                                        <Input value={total} disabled />
-                                    </FormGroup>
-                                </Col>
-                            </Row> :
-                            <Row>
-                                <Col md="4">
-                                    <FormGroup>
-                                        <Label>
-                                            Total
-                                        </Label>
-                                        <Input type="number" value={total} onChange={e => setTotal(e.target.value)} />
-                                    </FormGroup>
-                                </Col>
-                            </Row>
-                }
                 <Row>
                     <Col md="12">
                         <Label>
@@ -194,10 +172,6 @@ const FormPayment = () => {
                 toggle={() => setModalProvider(!modalProvider)}
                 setProviderId={setProviderId}
                 setProviderName={setProviderName}
-                setIsProfHealth={setIsProfHealth}
-                setPriceHour={setPriceHour}
-                setTotal={setTotal}
-                setCantHours={setCantHours}
             />
         </>)
     }

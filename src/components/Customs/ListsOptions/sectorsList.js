@@ -4,7 +4,8 @@ import React, { useEffect, useState } from 'react';
 
 export const SectorsListOpt = ({
     refresh,
-    setSectorId
+    setSectorId,
+    allFirst
 }) => {
     const [listSectors, setListSectors] = useState(<></>)
     const {
@@ -19,8 +20,10 @@ export const SectorsListOpt = ({
         if (!errorList && dataPage.length > 0) {
             setListSectors(
                 dataPage.map((item, key) => {
-                    if (key === 0) {
-                        setSectorId(item.id)
+                    if (!allFirst) {
+                        if (key === 0) {
+                            setSectorId(item.id)
+                        }
                     }
                     return (<option key={key} value={item.id}>{item.sector}</option>)
                 })
@@ -28,7 +31,7 @@ export const SectorsListOpt = ({
         } else {
             setListSectors(<></>)
         }
-    }, [errorList, dataPage, setSectorId])
+    }, [errorList, dataPage, setSectorId, allFirst])
 
     return (
         loadingList ? null : listSectors
