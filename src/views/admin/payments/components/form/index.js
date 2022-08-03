@@ -5,46 +5,77 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Button, Col, Form, FormGroup, InputGroup, InputGroupAddon, Label, Row, Spinner } from 'reactstrap';
 import Input from 'reactstrap/lib/Input';
 import ModalProviders from './modalProviders';
+import PeriodRow from './periosRow';
+import { numberFormat } from 'function/numberFormat';
 
 const FormPayment = () => {
-    const currentYear = new Date().getFullYear()
-    const currentMonth = (new Date().getMonth() + 1)
     const [providerId, setProviderId] = useState(false)
     const [providerName, setProviderName] = useState("")
-    const [month, setMonth] = useState(currentMonth)
-    const [year, setYear] = useState(currentYear)
     const [advance, setAdvance] = useState("")
-    const [type, setType] = useState("")
     const [total, setTotal] = useState(0)
     const [details, setDetails] = useState("")
     const [modalProvider, setModalProvider] = useState(false)
     const [loading, setLoading] = useState(false)
+
+    const [periods, setPeriods] = useState([{ month: 1, year: new Date().getFullYear(), amount: 0 }])
+    const [periodsPlant, setPeriodsPlant] = useState()
+
     const { newAlert, newActivity } = useContext(AlertsContext)
-    const { axiosPost } = useContext(ActionsBackend)
+    const { axiosPostPDF } = useContext(ActionsBackend)
 
     const registerWork = async () => {
-        setLoading(true)
-        const data = {
-            id_provider: providerId,
-            month: month,
-            year: year,
-            amount: total,
-            details: details,
-            type: type,
-            advance: advance
-        }
+        if (total > 0 && providerId) {
+            setLoading(true)
+            const data = {
+                id_provider: providerId,
+                amount: total,
+                details: details,
+                advance: advance,
+                total: total,
+                periods: periods
+            }
 
-        const response = await axiosPost(UrlNodeServer.paymentsDir.payments, data)
+            const response = await axiosPostPDF(UrlNodeServer.paymentsDir.payments, data)
 
-        if (!response.error) {
-            setDetails("")
-            newActivity(`El usuario ha registrado un nuevo ${advance === "" ? "adelanto" : "pago"} al proveedor de ID: ${providerId})`)
-            newAlert("success", "Pago registrado con éxito!", "")
+            if (!response.error) {
+                setDetails("")
+                setPeriods([{ month: 1, year: new Date().getFullYear(), amount: 0 }])
+                setTotal(0)
+                setProviderName("")
+                setProviderId(false)
+                newActivity(`El usuario ha registrado un nuevo ${advance === "" ? "adelanto" : "pago"} al proveedor de ID: ${providerId})`)
+                newAlert("success", "Pago registrado con éxito!", "")
+            } else {
+                newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)
+            }
+            setLoading(false)
         } else {
-            newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)
+            newAlert("danger", "Datos inválidos", `Controle el total de los periodos y el monotributista`)
         }
-        setLoading(false)
     }
+
+    console.log('periods :>> ', periods);
+
+    useEffect(() => {
+        let totalFinish = 0
+        setPeriodsPlant(
+            // eslint-disable-next-line
+            periods.map((item, key) => {
+                totalFinish = totalFinish + parseFloat(item.amount)
+                if (key === periods.length - 1) {
+                    setTotal(totalFinish)
+                }
+                return (
+                    <PeriodRow
+                        key={key}
+                        id={key}
+                        item={item}
+                        periods={periods}
+                        setPeriods={setPeriods}
+                    />)
+            })
+        )
+    }, [periods])
 
     useEffect(() => {
         setModalProvider(false)
@@ -90,57 +121,42 @@ const FormPayment = () => {
                     </Col>
                     <Col md="4">
                         <Label>
-                            Tipo de Liquidación
-                        </Label>
-                        <Input type="text" value={type} onChange={e => setType(e.target.value)} />
-                    </Col>
-                </Row>
-                <Row>
-                    <Col md="4">
-                        <FormGroup>
-                            <Label>
-                                Mes
-                            </Label>
-                            <Input type="select" value={month} onChange={e => setMonth(e.target.value)}>
-                                <option value={1}>Enero</option>
-                                <option value={2}>Febrero</option>
-                                <option value={3}>Marzo</option>
-                                <option value={4}>Abril</option>
-                                <option value={5}>Mayo</option>
-                                <option value={6}>Junio</option>
-                                <option value={7}>Julio</option>
-                                <option value={8}>Agosto</option>
-                                <option value={9}>Septiembre</option>
-                                <option value={10}>Octubre</option>
-                                <option value={11}>Noviembre</option>
-                                <option value={12}>Diciembre</option>
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md="2">
-                        <FormGroup>
-                            <Label>
-                                Año
-                            </Label>
-                            <Input type="number" min={2010} value={year} onChange={e => setYear(e.target.value)} />
-                        </FormGroup>
-                    </Col>
-                    <Col md="3">
-                        <FormGroup>
-                            <Label>
-                                Total
-                            </Label>
-                            <Input type="number" value={total} onChange={e => setTotal(e.target.value)} />
-                        </FormGroup>
-                    </Col>
-                    <Col md="3">
-                        <Label>
                             Tipo de Pago
                         </Label>
-                        <Input type="select" value={advance} onChange={e => advance(e.target.value)}>
+                        <Input type="select" value={advance} onChange={e => setAdvance(e.target.value)}>
                             <option value={""}>Registro de pago</option>
                             <option value={"1"}>Adelanto de sueldo</option>
                         </Input>
+                    </Col>
+                </Row>
+                <Row style={{ marginBottom: "15px" }}>
+                    <Col md="8" style={{ border: "2px solid red", padding: "15px" }}>
+                        <Label style={{ fontWeight: "bold" }}>Períodos
+                            <Button
+                                color="warning"
+                                style={{
+                                    borderRadius: "50%",
+                                    padding: "6px",
+                                    paddingInline: "10px",
+                                    marginLeft: "10px"
+                                }}
+                                onClick={e => {
+                                    e.preventDefault()
+                                    setPeriods(() => [...periods, { month: 1, year: new Date().getFullYear(), amount: 0 }])
+                                }}
+                            ><i className='fa fa-plus'></i></Button>
+                        </Label>
+                        <Row>
+                            {periodsPlant}
+                        </Row>
+                    </Col>
+                    <Col md="3">
+                        <FormGroup>
+                            <Label style={{ fontSize: "22px" }}>
+                                Total
+                            </Label>
+                            <Input style={{ fontSize: "22px", fontWeight: "bold" }} type="text" value={"$ " + numberFormat(total)} disabled />
+                        </FormGroup>
                     </Col>
                 </Row>
                 <Row>

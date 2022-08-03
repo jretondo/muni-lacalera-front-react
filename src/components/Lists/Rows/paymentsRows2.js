@@ -1,11 +1,11 @@
 import UrlNodeServer from '../../../api/nodeServer';
 import ActionsBackend from 'context/actionsBackend';
 import AlertsContext from 'context/alerts';
-import { capitalizeFirstLetter } from 'function/capitalizeFisrtWord';
 import { numberFormat } from 'function/numberFormat';
 import moment from 'moment-with-locales-es6';
 import React, { useContext } from 'react';
 import { DropdownItem, DropdownMenu, DropdownToggle, UncontrolledDropdown } from 'reactstrap';
+import { BsFileEarmarkPdfFill } from "react-icons/bs";
 import swal from 'sweetalert';
 
 const PaymentsRows2 = ({
@@ -16,13 +16,12 @@ const PaymentsRows2 = ({
     refreshToggle,
     first,
 }) => {
-    const period = moment(`${item.year}-${item.month}-01`, "YYYY-MM-DD").toDate()
     const { newAlert, newActivity } = useContext(AlertsContext)
     const { axiosDelete, loadingActions } = useContext(ActionsBackend)
 
     const removeWork = async () => {
         swal({
-            title: `Eliminar el trabajo de período ${capitalizeFirstLetter(moment(period).locale("es").format("MMMM"))}/${moment(period).format("YYYY")} con monto de $ ${numberFormat(item.amount)}!`,
+            title: `Eliminar pago de $ ${numberFormat(item.total)}!`,
             text: "¿Está seguro de eliminar este trabajo? Esta desición es permanente.",
             icon: "warning",
             buttons: {
@@ -34,15 +33,15 @@ const PaymentsRows2 = ({
             .then(async (willDelete) => {
                 let backPage = false
                 if (willDelete) {
-                    const response = await axiosDelete(UrlNodeServer.worksDir.works, item.id_work)
+                    const response = await axiosDelete(UrlNodeServer.paymentsDir.payments, item.id_payment)
                     if (!response.error) {
                         if (first) {
                             if (page > 1) {
                                 backPage = true
                             }
                         }
-                        newActivity(`Se ha eliminado el trabajo de periodo ${capitalizeFirstLetter(moment(item.from_contract).locale("es").format("MMMM"))}/${moment(item.from_contract).format("YYYY")} (idProv: ${item.id_provider})`)
-                        newAlert("success", "Trabajo eliminado con éxito!", "")
+                        newActivity(`Se ha eliminado el pago de ${item.total} del proveedor (${item.id_provider})`)
+                        newAlert("success", "Pago eliminado con éxito!", "")
                         if (backPage) {
                             setPage(parseInt(page - 1))
                         } else {
@@ -64,10 +63,7 @@ const PaymentsRows2 = ({
                 {`${item.name} (CUIT: ${item.cuit})`}
             </td>
             <td style={{ textAlign: "center" }}>
-                {`${capitalizeFirstLetter(moment(period).locale("es").format("MMMM"))}/${moment(period).format("YYYY")}`}
-            </td>
-            <td style={{ textAlign: "center" }}>
-                $ {numberFormat(item.amount)}
+                $ {numberFormat(item.total)}
             </td>
             <td className="text-right">
                 <UncontrolledDropdown>
@@ -82,6 +78,16 @@ const PaymentsRows2 = ({
                         <i className="fas fa-ellipsis-v" />
                     </DropdownToggle    >
                     <DropdownMenu className="dropdown-menu-arrow" right>
+                        <DropdownItem
+                            href="#pablo"
+                            onClick={e => {
+                                e.preventDefault()
+                                removeWork()
+                            }}
+                        >
+                            <BsFileEarmarkPdfFill />
+                            Reimprimir Recibo
+                        </DropdownItem>
                         <DropdownItem
                             href="#pablo"
                             onClick={e => {

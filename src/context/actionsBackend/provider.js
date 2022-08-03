@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ActionsBackend from './index';
 import React from 'react';
 import { processQuerys } from 'function/processQuerys';
+import FileSaver from 'file-saver'
 
 const ActionsBackendProvider = ({ children }) => {
     const [loadingActions, setLoadingActions] = useState(false)
@@ -166,6 +167,46 @@ const ActionsBackendProvider = ({ children }) => {
         })
     }
 
+    const axiosPostPDF = async (url, data) => {
+        setLoadingActions(true)
+        return axios.post(url, data, {
+            responseType: 'arraybuffer',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
+                Accept: 'application/pdf',
+            },
+        }).then(res => {
+            if (res.status === 201 || res.status === 200) {
+                let headerLine = res.headers['content-disposition'];
+                const largo = parseInt(headerLine.length)
+                let filename = headerLine.substring(21, largo);
+                var blob = new Blob([res.data], { type: "application/pdf" });
+                FileSaver.saveAs(blob, filename);
+
+                return {
+                    error: false,
+                    data: res.data.body,
+                    errorMsg: ""
+                }
+            } else {
+                return {
+                    error: true,
+                    data: "",
+                    errorMsg: "Error desconocido!"
+                }
+            }
+        }).catch(error => {
+            console.log('error :>> ', error);
+            return {
+                error: true,
+                data: "",
+                errorMsg: error.message
+            }
+        }).finally(() => {
+            setLoadingActions(false)
+        })
+    }
+
     return (
         <ActionsBackend.Provider value={{
             loadingActions,
@@ -173,7 +214,8 @@ const ActionsBackendProvider = ({ children }) => {
             axiosDelete,
             axiosGet,
             axiosPut,
-            axiosGetQuery
+            axiosGetQuery,
+            axiosPostPDF
         }}>
             {children}
         </ActionsBackend.Provider>

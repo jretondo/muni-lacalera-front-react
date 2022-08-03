@@ -132,7 +132,7 @@ const ListPayments = ({
                         <Spinner color="danger" style={{ width: "170px", height: "170px", margin: "auto" }} />
                     </Col>
                     :
-                    <TableList titlesArray={["Fecha Reg.", "Monotributista", "Período", "Monto", ""]}  >
+                    <TableList titlesArray={["Fecha Reg.", "Monotributista", "Monto", ""]}  >
                         {paymentsRows}
                     </TableList>}
             </Col>
