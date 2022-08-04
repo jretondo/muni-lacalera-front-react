@@ -17,7 +17,7 @@ const PaymentsRows2 = ({
     first,
 }) => {
     const { newAlert, newActivity } = useContext(AlertsContext)
-    const { axiosDelete, loadingActions } = useContext(ActionsBackend)
+    const { axiosDelete, loadingActions, axiosGetPDF } = useContext(ActionsBackend)
 
     const removeWork = async () => {
         swal({
@@ -54,6 +54,15 @@ const PaymentsRows2 = ({
             });
     }
 
+    const rePrintPDF = async (id) => {
+        const response = await axiosGetPDF(UrlNodeServer.paymentsDir.sub.reprint, id)
+        if (!response.error) {
+            newAlert("success", "Comprobante reimpreso con éxito!", "")
+        } else {
+            newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)
+        }
+    }
+
     return (
         <tr key={id} className={loadingActions ? "shimmer" : ""}>
             <td style={{ textAlign: "center" }}>
@@ -82,7 +91,7 @@ const PaymentsRows2 = ({
                             href="#pablo"
                             onClick={e => {
                                 e.preventDefault()
-                                removeWork()
+                                rePrintPDF(item.id_payment)
                             }}
                         >
                             <BsFileEarmarkPdfFill />

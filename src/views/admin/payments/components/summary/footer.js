@@ -8,12 +8,10 @@ import { Col, FormGroup, Input, Label, Row } from 'reactstrap';
 const SummaryFooter = ({
     data
 }) => {
-    const [hoursRows, setHoursRows] = useState(<td></td>)
     const [amountRows, setAmountRows] = useState(<td></td>)
     const [labels, setLabels] = useState([""])
     const [finalList, setFinalList] = useState(<><tr></tr><tr></tr></>)
     const [totalAmount, setTotalAmount] = useState(0)
-    const [totalHours, setTotalHours] = useState(0)
 
     useEffect(() => {
         let periods = []
@@ -35,9 +33,7 @@ const SummaryFooter = ({
                 if (key === data.length - 1) {
                     setLabels(periods)
                     setAmountRows(amounts)
-                    setHoursRows(hours)
                     setTotalAmount(cantAmount)
-                    setTotalHours(cantHours)
                 }
             })
         }
@@ -46,15 +42,11 @@ const SummaryFooter = ({
     useEffect(() => {
         setFinalList(<>
             <tr className="table-light">
-                <td>Total Hs.</td>
-                {hoursRows}
-            </tr>
-            <tr className="table-light">
                 <td>total en $</td>
                 {amountRows}
             </tr>
         </>)
-    }, [amountRows, hoursRows])
+    }, [amountRows])
 
     return (
         <>
@@ -66,14 +58,6 @@ const SummaryFooter = ({
                 </Col>
             </Row>
             <Row>
-                <Col md="6">
-                    <FormGroup style={{ border: "2px solid red", padding: "15px", fontSize: "18px" }}>
-                        <Label >
-                            TOTAL de HORAS
-                        </Label>
-                        <Input value={totalHours + " hs"} disabled />
-                    </FormGroup>
-                </Col>
                 <Col md="6">
                     <FormGroup style={{ border: "2px solid red", padding: "15px", fontSize: "18px" }}>
                         <Label >

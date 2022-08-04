@@ -207,6 +207,44 @@ const ActionsBackendProvider = ({ children }) => {
         })
     }
 
+    const axiosGetPDF = async (url, id) => {
+        setLoadingActions(true)
+        return axios.get(url + "/" + id, {
+            responseType: 'arraybuffer',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
+                Accept: 'application/pdf',
+            },
+        }).then(res => {
+            if (res.status === 200) {
+                let headerLine = res.headers['content-disposition'];
+                const largo = parseInt(headerLine.length)
+                let filename = headerLine.substring(21, largo);
+                var blob = new Blob([res.data], { type: "application/pdf" });
+                FileSaver.saveAs(blob, filename);
+                return {
+                    error: false,
+                    data: res.data.body,
+                    errorMsg: ""
+                }
+            } else {
+                return {
+                    error: true,
+                    data: "",
+                    errorMsg: "Error desconocido!"
+                }
+            }
+        }).catch(error => {
+            return {
+                error: true,
+                data: "",
+                errorMsg: error.message
+            }
+        }).finally(() => {
+            setLoadingActions(false)
+        })
+    }
+
     return (
         <ActionsBackend.Provider value={{
             loadingActions,
@@ -215,7 +253,8 @@ const ActionsBackendProvider = ({ children }) => {
             axiosGet,
             axiosPut,
             axiosGetQuery,
-            axiosPostPDF
+            axiosPostPDF,
+            axiosGetPDF
         }}>
             {children}
         </ActionsBackend.Provider>

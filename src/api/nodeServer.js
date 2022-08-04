@@ -91,7 +91,9 @@ const amountsDir = {
 const paymentsDir = {
     payments,
     sub: {
-        details: payments + "/details"
+        details: payments + "/details",
+        reprint: payments + "/reprint",
+        summary: payments + "/summary"
     }
 }
 

@@ -9,39 +9,7 @@ const SummaryGraphic = ({
     loading
 }) => {
     const [labels, setLabels] = useState([""])
-    const [totalHours, setTotalHours] = useState([0])
     const [totalAmount, setTotalAmount] = useState([0])
-
-    const generateGraphicHours = useCallback(() => {
-        let canvasElement = document.createElement("canvas")
-        canvasElement.id = "myChart"
-        document.getElementById("myChart").remove()
-        document.getElementById("container-canvas").appendChild(canvasElement)
-        const ctx = document.getElementById('myChart');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Total de Hs.',
-                        data: totalHours,
-                        backgroundColor: 'rgba(153, 102, 255, 0.6)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    }, [labels, totalHours])
-
 
     const generateGraphicAmount = useCallback(() => {
         let canvasElement = document.createElement("canvas")
@@ -55,7 +23,7 @@ const SummaryGraphic = ({
                 labels: labels,
                 datasets: [
                     {
-                        label: 'Monto en $',
+                        label: 'Pagos en $',
                         data: totalAmount,
                         backgroundColor: 'rgba(255, 99, 132, 0.6)',
                         borderColor: 'rgba(255, 99, 132, 1)',
@@ -74,13 +42,10 @@ const SummaryGraphic = ({
     }, [labels, totalAmount])
 
     useEffect(() => {
-        if (totalHours.length > 0 && labels.length > 0) {
-            generateGraphicHours()
-        }
         if (totalAmount.length > 0 && labels.length > 0) {
             generateGraphicAmount()
         }
-    }, [totalAmount, totalHours, labels, generateGraphicHours, generateGraphicAmount])
+    }, [totalAmount, labels, generateGraphicAmount])
 
     useEffect(() => {
         let tAmount = []
@@ -101,13 +66,11 @@ const SummaryGraphic = ({
 
                 if (key === data.length - 1) {
                     setTotalAmount(tAmount)
-                    setTotalHours(tHours)
                     setLabels(periods)
                 }
             })
         } else {
             setTotalAmount([0])
-            setTotalHours([0])
             setLabels([""])
         }
     }, [data])
@@ -115,11 +78,6 @@ const SummaryGraphic = ({
 
     return (
         <>
-            <Row className={loading ? "shimmer" : ""} >
-                <Col md="12" id="container-canvas" >
-                    <canvas id="myChart" width={"150px"} style={{ width: "100%", maxHeight: "150px" }} ></canvas>
-                </Col>
-            </Row>
             <Row >
                 <Col md="12" id="container-canvas2">
                     <canvas id="myChart2" style={{ width: "100%", maxHeight: "150px" }} ></canvas>

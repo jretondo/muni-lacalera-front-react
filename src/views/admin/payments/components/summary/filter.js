@@ -37,10 +37,9 @@ const SummaryFilter = ({
             data.push({ idProvider: providerId })
         }
 
-        const response = await axiosGetQuery(UrlNodeServer.worksDir.sub.summary, data)
+        const response = await axiosGetQuery(UrlNodeServer.paymentsDir.sub.summary, data)
 
         if (!response.error) {
-            console.log('response.data :>> ', response.data);
             setData(response.data)
         } else {
             newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)

@@ -142,7 +142,8 @@ const FormPayment = () => {
                                 }}
                                 onClick={e => {
                                     e.preventDefault()
-                                    setPeriods(() => [...periods, { month: 1, year: new Date().getFullYear(), amount: 0 }])
+                                    console.log('periods[periods.length - 1].month :>> ', periods[periods.length - 1].month);
+                                    setPeriods(() => [...periods, { month: (periods[periods.length - 1].month === 12 ? 1 : parseInt(periods[periods.length - 1].month) + 1), year: (periods[periods.length - 1].month === 12 ? parseInt(periods[periods.length - 1].year) + 1 : parseInt(periods[periods.length - 1].year)), amount: 0 }])
                                 }}
                             ><i className='fa fa-plus'></i></Button>
                         </Label>
