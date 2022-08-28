@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Col, FormGroup, Input, Label, Row, Spinner } from 'reactstrap';
+import React, { useContext, useEffect, useState } from 'react';
+import { Button, Col, FormGroup, Input, Label, Row, Spinner } from 'reactstrap';
 import { TableList } from '../../../../../components/Lists/TableList';
 import { SearchFormButtonAddon } from 'components/Search/Search2';
 import { useAxiosGetList } from '../../../../../hooks/useAxiosGetList';
@@ -8,6 +8,8 @@ import PaginationComp from 'components/Pagination/Pages';
 
 import { ProviderRow } from 'components/Lists/Rows/providerRow';
 import { SectorsListOpt } from 'components/Customs/ListsOptions/sectorsList';
+import ActionsBackend from 'context/actionsBackend';
+import AlertsContext from 'context/alerts';
 
 const List = ({
     setIdProv,
@@ -22,6 +24,9 @@ const List = ({
     const [sectorId, setSectorId] = useState("")
     const [isProf, setIsProf] = useState("")
     const [isHealthProf, setIsHealthProf] = useState("")
+    const [loading, setLoading] = useState(false)
+    const { axiosQueryPDF } = useContext(ActionsBackend)
+    const { newAlert } = useContext(AlertsContext)
     const {
         loadingList,
         dataPage,
@@ -68,6 +73,23 @@ const List = ({
         setRefreshList(!refreshList)
         // eslint-disable-next-line 
     }, [moduleActive, sectorId, isHealthProf, isProf, advanceSearch])
+
+    const printPDF = async () => {
+        setLoading(true)
+        const response = await axiosQueryPDF(UrlNodeServer.providersDir.sub.pdf,
+            [{ query: textSearch },
+            { sectorId: sectorId },
+            { isProf: isProf },
+            { isHealthProf: isHealthProf },
+            { advanceSearch: advanceSearch }
+            ])
+        if (!response.error) {
+            newAlert("success", "Pago registrado con éxito!", "")
+        } else {
+            newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)
+        }
+        setLoading(false)
+    }
 
     return (
         <>
@@ -133,6 +155,17 @@ const List = ({
                 </Col>
             </Row>
             <Row>
+                <Col>
+                    {loading ?
+                        <Spinner color="danger" />
+                        :
+                        <Button color="danger" onClick={e => {
+                            e.preventDefault()
+                            printPDF()
+                        }}>
+                            Imprimir PDF
+                        </Button>}
+                </Col>
                 <Col>
                     {!pageObj ? null :
                         <PaginationComp
