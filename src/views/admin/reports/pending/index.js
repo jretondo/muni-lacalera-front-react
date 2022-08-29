@@ -1,27 +1,30 @@
 import List from './components/list';
 import React, { useState } from 'react';
-import { Col, Row } from 'reactstrap';
 import Filter from './components/filter';
 
 const ReportsPending = ({
     moduleActive
 }) => {
     const [data, setData] = useState([])
+    const [totalToPay, setTotalToPay] = useState(0)
+    const [monthSelect, setMonthSelect] = useState("")
+    const [yearSelect, setYearSelect] = useState("")
+
     return (<>
         <Filter
             setData={setData}
             moduleActive={moduleActive}
+            setTotalToPay={setTotalToPay}
+            setMonthSelect={setMonthSelect}
+            setYearSelect={setYearSelect}
         />
-        <Row>
-            <Col md="8">
+        <List
+            data={data}
+            totalToPay={totalToPay}
+            monthSelect={monthSelect}
+            yearSelect={yearSelect}
+        />
 
-            </Col>
-            <Col md="4">
-                <List
-                    data={data}
-                />
-            </Col>
-        </Row>
     </>)
 }
 

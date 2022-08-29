@@ -125,7 +125,7 @@ const FormPayment = () => {
                         </Label>
                         <Input type="select" value={advance} onChange={e => setAdvance(e.target.value)}>
                             <option value={""}>Registro de pago</option>
-                            <option value={"1"}>Adelanto de sueldo</option>
+                            <option value={"1"}>Adelanto de pago</option>
                         </Input>
                     </Col>
                 </Row>

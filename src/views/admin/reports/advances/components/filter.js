@@ -9,9 +9,10 @@ import ModalProviders from 'views/admin/payments/components/form/modalProviders'
 const Filter = ({
     moduleActive,
     setData,
-    setTotalToPay,
     setMonthSelect,
-    setYearSelect
+    setYearSelect,
+    setLoading,
+    loading
 }) => {
     const [sectorId, setSectorId] = useState("")
     const [providerId, setProviderId] = useState("")
@@ -19,7 +20,6 @@ const Filter = ({
     const [providerModal, setProviderModal] = useState(false)
     const [month, setMonth] = useState(new Date().getMonth() + 1)
     const [year, setYear] = useState(new Date().getFullYear())
-    const [loading, setLoading] = useState(false)
     const { axiosGetQuery } = useContext(ActionsBackend)
     const { newAlert } = useContext(AlertsContext)
 
@@ -38,7 +38,7 @@ const Filter = ({
             data.push({ idProvider: providerId })
         }
 
-        const response = await axiosGetQuery(UrlNodeServer.reportsDir.sub.pending, data)
+        const response = await axiosGetQuery(UrlNodeServer.reportsDir.sub.advances, data)
 
         if (!response.error) {
             setYearSelect(year)
@@ -84,7 +84,6 @@ const Filter = ({
                     break;
             }
             setData(response.data.data)
-            setTotalToPay(response.data.totalToPay)
         } else {
             newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)
         }
@@ -133,7 +132,7 @@ const Filter = ({
                 <Col md="4">
                     <FormGroup>
                         <Label>
-                            Periodo
+                            Periodo desde
                         </Label>
                         <Row>
                             <Col md="8">

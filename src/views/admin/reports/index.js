@@ -24,7 +24,7 @@ const ReportsComp = () => {
                     <ButtonGroup vertical={width > 1030 ? false : true}>
                         <ButtonOpenCollapse
                             action={() => setModuleActive(0)}
-                            tittle={"Pendientes de Pago"}
+                            tittle={"Pagos Pendientes"}
                             active={moduleActive === 0 ? true : false}
                         />
                         <ButtonOpenCollapse
