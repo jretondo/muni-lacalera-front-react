@@ -19,6 +19,8 @@ const List = ({ data, totalToPay, monthSelect, yearSelect }) => {
                     />)
                 })
             )
+        } else {
+            setPendingsList(<tr><td>No hay reporte generado con los filtro colocados</td></tr>)
         }
     }, [data])
 
