@@ -7,6 +7,7 @@ import ButtonOpenCollapse from "components/Buttons/buttonOpenCollapse";
 import { useWindowSize } from "hooks/UseWindowSize";
 import ReportsPending from "./pending";
 import ReportsAdvances from "./advances";
+import AdvanceMonthly from "./advanceMonthly";
 
 const ReportsComp = () => {
     const [moduleActive, setModuleActive] = useState(0)
@@ -34,6 +35,13 @@ const ReportsComp = () => {
                             tittle={"Adelantos Pendientes"}
                             active={moduleActive === 1 ? true : false}
                         />
+                        <ButtonOpenCollapse
+                            action={() => {
+                                setModuleActive(2)
+                            }}
+                            tittle={"Adelantos a descontar"}
+                            active={moduleActive === 2 ? true : false}
+                        />
                     </ButtonGroup>
                 </CardHeader>
                 <CardBody>
@@ -44,6 +52,9 @@ const ReportsComp = () => {
                     </Collapse>
                     <Collapse isOpen={moduleActive === 1 ? true : false} >
                         <ReportsAdvances />
+                    </Collapse>
+                    <Collapse isOpen={moduleActive === 2 ? true : false} >
+                        <AdvanceMonthly />
                     </Collapse>
                 </CardBody>
             </Card>

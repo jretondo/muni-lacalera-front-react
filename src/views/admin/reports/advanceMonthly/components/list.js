@@ -1,4 +1,4 @@
-import { PendingRow } from 'components/Lists/Rows/pendingRow';
+import { AdvancePendingRow } from 'components/Lists/Rows/advancePendingRow';
 import { TableList } from 'components/Lists/TableList';
 import { numberFormat } from 'function/numberFormat';
 import React, { useEffect, useState } from 'react';
@@ -12,7 +12,7 @@ const List = ({ data, totalToPay, monthSelect, yearSelect }) => {
             setPendingsList(
                 // eslint-disable-next-line
                 data.map((item, key) => {
-                    return (<PendingRow
+                    return (<AdvancePendingRow
                         key={key}
                         id={key}
                         item={item}
@@ -28,7 +28,7 @@ const List = ({ data, totalToPay, monthSelect, yearSelect }) => {
         <>
             <Row style={{ marginTop: "30px" }}>
                 <Col md="12">
-                    <TableList titlesArray={["Nombre", "CUIT", "Sector", "$ por trabajos", "$ pagado", "$ por pagar"]}  >
+                    <TableList titlesArray={["Nombre", "CUIT", "Sector", "$ por descontar"]}  >
                         {pendingsList}
                     </TableList>
                 </Col>
@@ -37,7 +37,7 @@ const List = ({ data, totalToPay, monthSelect, yearSelect }) => {
                 <Col>
                     <FormGroup>
                         <Label style={{ fontWeight: "bold" }}>
-                            Total a pagar en {monthSelect}/{yearSelect}
+                            Total a descontar en {monthSelect}/{yearSelect}
                         </Label>
                         <Input type="text" disabled style={{ fontSize: "20px", fontWeight: "bold", color: `${totalToPay < 0 ? "red" : "green"}` }} value={"$ " + numberFormat(totalToPay)} />
                     </FormGroup>

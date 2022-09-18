@@ -119,7 +119,9 @@ const reportsDir = {
     reports,
     sub: {
         pending: reports + "/pending",
-        advances: reports + "/advances"
+        advances: reports + "/advances",
+        advancesPending: reports + "/advancesPending",
+        advancesPendingPDF: reports + "/advancesPendingPDF"
     }
 }
 
