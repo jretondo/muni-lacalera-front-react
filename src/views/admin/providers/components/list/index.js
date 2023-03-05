@@ -25,7 +25,7 @@ const List = ({
     const [isProf, setIsProf] = useState("")
     const [isHealthProf, setIsHealthProf] = useState("")
     const [loading, setLoading] = useState(false)
-    const { axiosQueryPDF } = useContext(ActionsBackend)
+    const { axiosQueryPDF, axiosQueryExcel } = useContext(ActionsBackend)
     const { newAlert } = useContext(AlertsContext)
     const {
         loadingList,
@@ -77,6 +77,23 @@ const List = ({
     const printPDF = async () => {
         setLoading(true)
         const response = await axiosQueryPDF(UrlNodeServer.providersDir.sub.pdf,
+            [{ query: textSearch },
+            { sectorId: sectorId },
+            { isProf: isProf },
+            { isHealthProf: isHealthProf },
+            { advanceSearch: advanceSearch }
+            ])
+        if (!response.error) {
+            newAlert("success", "Pago registrado con éxito!", "")
+        } else {
+            newAlert("danger", "Hubo un error", `Error: ${response.erroMsg}`)
+        }
+        setLoading(false)
+    }
+
+    const printExcel = async () => {
+        setLoading(true)
+        const response = await axiosQueryExcel(UrlNodeServer.providersDir.sub.excel,
             [{ query: textSearch },
             { sectorId: sectorId },
             { isProf: isProf },
@@ -164,6 +181,15 @@ const List = ({
                             printPDF()
                         }}>
                             Imprimir PDF
+                        </Button>}
+                    {loading ?
+                        <Spinner color="danger" />
+                        :
+                        <Button color="success" onClick={e => {
+                            e.preventDefault()
+                            printExcel()
+                        }}>
+                            Descargar Excel
                         </Button>}
                 </Col>
                 <Col>

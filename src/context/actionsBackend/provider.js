@@ -287,6 +287,48 @@ const ActionsBackendProvider = ({ children }) => {
         })
     }
 
+    const axiosQueryExcel = async (url, querys) => {
+        setLoadingActions(true)
+        let query = ""
+        if (querys.length > 0) {
+            query = await processQuerys(querys)
+        }
+        return axios.get(url + query, {
+            responseType: 'arraybuffer',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('user-token'),
+                Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            },
+        }).then(res => {
+            if (res.status === 200) {
+                let headerLine = res.headers['content-disposition'];
+                const largo = parseInt(headerLine.length)
+                let filename = headerLine.substring(21, largo);
+                var blob = new Blob([res.data], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                FileSaver.saveAs(blob, filename);
+                return {
+                    error: false,
+                    data: res.data.body,
+                    errorMsg: ""
+                }
+            } else {
+                return {
+                    error: true,
+                    data: "",
+                    errorMsg: "Error desconocido!"
+                }
+            }
+        }).catch(error => {
+            return {
+                error: true,
+                data: "",
+                errorMsg: error.message
+            }
+        }).finally(() => {
+            setLoadingActions(false)
+        })
+    }
+
     return (
         <ActionsBackend.Provider value={{
             loadingActions,
@@ -297,7 +339,8 @@ const ActionsBackendProvider = ({ children }) => {
             axiosGetQuery,
             axiosPostPDF,
             axiosGetPDF,
-            axiosQueryPDF
+            axiosQueryPDF,
+            axiosQueryExcel
         }}>
             {children}
         </ActionsBackend.Provider>

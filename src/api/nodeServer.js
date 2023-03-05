@@ -72,7 +72,8 @@ const providersDir = {
     sub: {
         fiscal: providers + "/fiscal",
         details: providers + "/details",
-        pdf: providers + "/pdf"
+        pdf: providers + "/pdf",
+        excel: providers + "/excel"
     }
 }
 
